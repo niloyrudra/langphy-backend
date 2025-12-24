@@ -1,3 +1,7 @@
+# ⚠️ WARNING
+# This repo must NEVER contain real secrets.
+# Always use *.example.yaml and .env.example
+
 # Node
 node_modules/
 npm-debug.log*
