@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: writing-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: writing
+  template:
+    metadata:
+      labels:
+        app: writing
+    spec:
+      containers:
+        - name: writing
+          image: niloyrudra/writing
+          env:
+            - name: WRITING_MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secrets
+                  key: WRITING_MONGO_URI
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: writing-srv
+spec:
+  selector:
+    app: writing
+  ports:
+    - name: writing
+      protocol: TCP
+      port: 4006
+      targetPort: 4006

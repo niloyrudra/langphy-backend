@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: speaking-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: speaking
+  template:
+    metadata:
+      labels:
+        app: speaking
+    spec:
+      containers:
+        - name: speaking
+          image: niloyrudra/speaking
+          env:
+            - name: SPEAKING_MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secrets
+                  key: SPEAKING_MONGO_URI
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: speaking-srv
+spec:
+  selector:
+    app: speaking
+  ports:
+    - name: speaking
+      protocol: TCP
+      port: 4004
+      targetPort: 4004

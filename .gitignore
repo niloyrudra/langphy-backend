@@ -1,0 +1,29 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+.next/
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Kubernetes secrets
+**/*secret*.yaml
+**/*secrets*.yaml
+!**/*.example.yaml
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log

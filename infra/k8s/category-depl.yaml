@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: category-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: category
+  template:
+    metadata:
+      labels:
+        app: category
+    spec:
+      containers:
+        - name: category
+          image: niloyrudra/category
+          env:
+            - name: CATEGORY_MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secrets
+                  key: CATEGORY_MONGO_URI
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: category-srv
+spec:
+  selector:
+    app: category
+  ports:
+  - name: category
+    protocol: TCP
+    port: 4000
+    targetPort: 4000

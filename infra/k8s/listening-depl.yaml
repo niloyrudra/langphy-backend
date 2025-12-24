@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: listening-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: listening
+  template:
+    metadata:
+      labels:
+        app: listening
+    spec:
+      containers:
+        - name: listening
+          image: niloyrudra/listening
+          env:
+            - name: LISTENING_MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secrets
+                  key: LISTENING_MONGO_URI
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: listening-srv
+spec:
+  selector:
+    app: listening
+  ports:
+    - name: listening
+      protocol: TCP
+      port: 4007
+      targetPort: 4007

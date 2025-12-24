@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quiz-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quiz
+  template:
+    metadata:
+      labels:
+        app: quiz
+    spec:
+      containers:
+        - name: quiz
+          image: niloyrudra/quiz
+          env:
+            - name: QUIZ_MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secrets
+                  key: QUIZ_MONGO_URI
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quiz-srv
+spec:
+  selector:
+    app: quiz
+  ports:
+    - name: quiz
+      protocol: TCP
+      port: 4003
+      targetPort: 4003

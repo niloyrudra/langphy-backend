@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reading-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reading
+  template:
+    metadata:
+      labels:
+        app: reading
+    spec:
+      containers:
+        - name: reading
+          image: niloyrudra/reading
+          env:
+            - name: READING_MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secrets
+                  key: READING_MONGO_URI
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reading-srv
+spec:
+  selector:
+    app: reading
+  ports:
+    - name: reading
+      protocol: TCP
+      port: 4005
+      targetPort: 4005

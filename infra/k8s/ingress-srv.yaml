@@ -1,0 +1,83 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: langphy-app.dev
+      http:
+        paths:
+          - path: /api/users/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: auth-srv
+                port:
+                  number: 3000
+
+          - path: /api/category/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: category-srv
+                port:
+                  number: 4000
+          
+          - path: /api/unit/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: unit-srv
+                port:
+                  number: 4001
+
+          - path: /api/practices/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: practice-srv
+                port:
+                  number: 4002
+
+          - path: /api/quizzes/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: quiz-srv
+                port:
+                  number: 4003
+
+          - path: /api/speaking/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: speaking-srv
+                port:
+                  number: 4004
+
+          - path: /api/reading/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: reading-srv
+                port:
+                  number: 4005
+
+          - path: /api/writing/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: writing-srv
+                port:
+                  number: 4006
+
+          - path: /api/listening/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: listening-srv
+                port:
+                  number: 4007

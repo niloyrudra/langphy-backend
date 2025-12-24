@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unit-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unit
+  template:
+    metadata:
+      labels:
+        app: unit
+    spec:
+      containers:
+        - name: unit
+          image: niloyrudra/unit
+          env:
+            - name: UNIT_MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secrets
+                  key: UNIT_MONGO_URI
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: unit-srv
+spec:
+  selector:
+    app: unit
+  ports:
+    - name: unit
+      protocol: TCP
+      port: 4001
+      targetPort: 4001
