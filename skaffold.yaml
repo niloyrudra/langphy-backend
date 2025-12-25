@@ -88,3 +88,8 @@ build:
         manual:
           - dest: .
             src: 'src/**/*.ts'
+            
+    - image: niloyrudra/nlp-service
+      context: nlp-service
+      docker:
+        dockerfile: Dockerfile

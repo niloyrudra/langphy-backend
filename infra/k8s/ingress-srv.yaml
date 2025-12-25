@@ -4,6 +4,7 @@ metadata:
   name: ingress-srv
   annotations:
     nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
   ingressClassName: nginx
   rules:
@@ -81,3 +82,12 @@ spec:
                 name: listening-srv
                 port:
                   number: 4007
+
+          - path: /api/nlp/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: nlp-srv
+                port:
+                  number: 8000
+
