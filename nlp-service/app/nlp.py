@@ -36,13 +36,18 @@ def analyze_lesson(text: str):
 
     tokens = []
     for token in doc:
+        morph = token.morph.to_dict()
+        case = morph.get("Case")
+        
         tokens.append({
             "text": token.text,
             "pos": token.pos_,
             "tag": token.tag_,
             "dep": token.dep_,
             "lemma": token.lemma_,
-            "is_stop": token.is_stop
+            "is_stop": token.is_stop,
+            "case": case,
+            "color": CASE_COLORS.get(case)
         })
 
     return {

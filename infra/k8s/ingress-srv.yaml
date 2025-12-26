@@ -4,12 +4,12 @@ metadata:
   name: ingress-srv
   annotations:
     nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
   ingressClassName: nginx
   rules:
-    - host: langphy-app.dev
-      http:
+    # - host: langphy-app.dev
+    - http:
         paths:
           - path: /api/users/?(.*)
             pathType: ImplementationSpecific
