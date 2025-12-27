@@ -1,6 +1,7 @@
 import spacy
 import os
 import json
+from app.utils import default_article, pronunciation_difficulty
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DICT_PATH = os.path.join(BASE_DIR, "de_en_dict.json")
@@ -77,38 +78,6 @@ def analyze_text(text: str):
     return {
         "text": text,
         "tokens": tokens
-    }
-
-def default_article(gender, number):
-    if number == "Plur":
-        return "die"
-    if gender == "Masc":
-        return "der"
-    if gender == "Fem":
-        return "die"
-    if gender == "Neut":
-        return "das"
-    return None
-
-def pronunciation_difficulty(word: str):
-    score = 0
-    flags = []
-
-    if any(c in word for c in "äöüß"):
-        score += 1
-        flags.append("special_chars")
-
-    if len(word) > 10:
-        score += 1
-        flags.append("long_word")
-
-    if any(cluster in word for cluster in ["sch", "ch", "sp", "st"]):
-        score += 1
-        flags.append("consonant_cluster")
-
-    return {
-        "score": score,
-        "flags": flags
     }
 
 
