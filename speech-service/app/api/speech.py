@@ -33,15 +33,6 @@ async def evaluate_speech(
         text = transcription.get("text", "").strip()
         segments = transcription.get("segments", [])
 
-        # 4️⃣ Flatten all segments' words
-        words_with_conf = []
-        for segment in transcription["segments"]:
-            for w in segment.get("words", []):  # word timestamps from Whisper
-                words_with_conf.append({
-                    "text": w["word"],
-                    "confidence": word_confidence(w.get("probability", 0))  # use logprob or probability
-                })
-
         if not text:
             return {
                 "error": "No speech detected",
@@ -55,6 +46,15 @@ async def evaluate_speech(
             expected=expected_text,
             spoken=text
         )
+
+        # 4️⃣ Flatten all segments' words
+        words_with_conf = []
+        for segment in transcription["segments"]:
+            for w in segment.get("words", []):  # word timestamps from Whisper
+                words_with_conf.append({
+                    "text": w["word"],
+                    "confidence": word_confidence(w.get("probability", 0))  # use logprob or probability
+                })
 
         # 5️ Final response
         return {
