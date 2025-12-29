@@ -1,7 +1,7 @@
 import spacy
 import os
 import json
-from app.utils import default_article, pronunciation_difficulty
+from app.utils import default_article, pronunciation_difficulty, pronunciation_score, generate_speaking_feedback
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DICT_PATH = os.path.join(BASE_DIR, "de_en_dict.json")
@@ -149,31 +149,40 @@ def analyze_answer(expected: str, user_answer: str):
         )
     }
 
-def analyze_speaking(expected: str, spoken_text: str):
-    expected_doc = nlp(expected)
+def analyze_speaking(expected_text: str, spoken_text: str):
+    expected_doc = nlp(expected_text)
     spoken_doc = nlp(spoken_text)
 
     similarity = expected_doc.similarity(spoken_doc)
 
     issues = []
 
+    # Index spoken tokens by lemma (faster + safer)
+    spoken_tokens = {
+        t.lemma_: t for t in spoken_doc if not t.is_punct
+    }
+
     # Article & case issues
     for token in expected_doc:
+        if token.is_punct:
+            continue
+
+        # Article & noun agreement
         if token.pos_ == "NOUN":
             expected_article = next((t for t in token.lefts if t.pos_ == "DET"), None)
-            spoken_match = next((t for t in spoken_doc if t.lemma_ == token.lemma_), None)
+            # spoken_match = next((t for t in spoken_doc if t.lemma_ == token.lemma_), None)
+            spoken_match = spoken_tokens.get(token.lemma_)
 
             if expected_article and spoken_match:
                 spoken_article = next((t for t in spoken_match.lefts if t.pos_ == "DET"), None)
                 if not spoken_article:
-                    issues.append(f"Missing article for '{token.text}'")
+                    # issues.append(f"Missing article for '{token.text}'")
+                    issues.append(f"Missing article for '{expected_article.text} {token.text}'")
 
     return {
+        "spoken_text": spoken_text,
         "similarity": round(similarity, 2),
         "issues": issues,
-        "feedback": (
-            "Excellent pronunciation and structure!" if similarity > 0.85 else
-            "Good, but check articles and cases." if similarity > 0.65 else
-            "Try again and focus on grammar."
-        )
+        "pronunciation_score": pronunciation_score(similarity),
+        "feedback": generate_speaking_feedback(similarity, issues)
     }

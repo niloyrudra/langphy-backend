@@ -91,3 +91,11 @@ spec:
                 port:
                   number: 8000
 
+          - path: /api/speech/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: speech-srv
+                port:
+                  number: 8001
+

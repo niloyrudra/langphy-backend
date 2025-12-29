@@ -1,55 +1,58 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nlp-depl
+  name: speech-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nlp
+      app: speech
   template:
     metadata:
       labels:
-        app: nlp
+        app: speech
     spec:
       containers:
-        - name: nlp
-          image: niloyrudra/nlp-service
+        - name: speech
+          image: niloyrudra/speech-service
           imagePullPolicy: IfNotPresent
+          env:
+            - name: NLP_SERVICE_URL
+              value: http://nlp-srv:8000
           ports:
-            - containerPort: 8000
-            
+            - containerPort: 8001
+
           resources:
             requests:
               cpu: "250m"
               memory: "512Mi"
             limits:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: "1000m"
+              memory: "2Gi"
 
           readinessProbe:
             httpGet:
               path: /docs
-              port: 8000
-            initialDelaySeconds: 10
+              port: 8001
+            initialDelaySeconds: 60 # model may take time to load
             periodSeconds: 10
 
           livenessProbe:
             httpGet:
               path: /docs
-              port: 8000
-            initialDelaySeconds: 30
-            periodSeconds: 30
+              port: 8001
+            initialDelaySeconds: 120
+            periodSeconds: 20
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: nlp-srv
+  name: speech-srv
 spec:
   selector:
-    app: nlp
+    app: speech
   ports:
     - name: http
       protocol: TCP
-      port: 8000
-      targetPort: 8000
+      port: 8001
+      targetPort: 8001
