@@ -41,13 +41,13 @@ async def evaluate_speech(
                 "analysis": None
             }
 
-        # 5️⃣ NLP evaluation
+        # 4️⃣ NLP evaluation
         nlp_result = await evaluate_text(
             expected=expected_text,
             spoken=text
         )
 
-        # 4️⃣ Flatten all segments' words
+        # 5️⃣ Flatten all segments' words
         words_with_conf = []
         for segment in transcription["segments"]:
             for w in segment.get("words", []):  # word timestamps from Whisper
