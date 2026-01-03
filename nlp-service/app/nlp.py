@@ -86,8 +86,8 @@ def analyze_lesson(text: str):
     tokens = []
 
     for token in doc:
-        if token.is_punct:
-            continue
+        # if token.is_punct:
+        #     continue
 
         morph = token.morph.to_dict()
         gender = morph.get("Gender")

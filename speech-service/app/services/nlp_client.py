@@ -8,6 +8,7 @@ NLP_SERVICE_URL = os.getenv(
 )
 
 async def evaluate_text(expected: str, spoken: str):
+    # timeout = httpx.Timeout(10.0, connect=5.0, read=10.0, write=30.0)
     timeout = httpx.Timeout(10.0, connect=5.0)
     async with httpx.AsyncClient( timeout=timeout ) as client:
         response = await client.post(

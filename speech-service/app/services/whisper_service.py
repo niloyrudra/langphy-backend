@@ -17,7 +17,6 @@ class WhisperService:
             "segments": result["segments"]
         }
 
-
 whisper_service = WhisperService()
 
 # from faster_whisper import WhisperModel

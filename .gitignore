@@ -21,6 +21,7 @@ build/
 # Kubernetes secrets
 **/*secret*.yaml
 **/*secrets*.yaml
+**/*postgres-secrets*.yaml
 !**/*.example.yaml
 **/*de_en_dict.json
 

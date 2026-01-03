@@ -16,6 +16,15 @@ build:
         manual:
           - dest: .
             src: 'src/**/*.ts'
+    
+    - image: niloyrudra/streaks
+      context: streaks
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'
             
     - image: niloyrudra/category
       context: category
@@ -93,3 +102,36 @@ build:
       context: nlp-service
       docker:
         dockerfile: Dockerfile
+
+profiles:
+  - name: db
+    deploy:
+      kubectl:
+        manifests:
+          - infra/k8s/auth-postgres-pvc.yaml
+          - infra/k8s/auth-postgres-depl.yaml
+          - infra/k8s/streaks-postgres-pvc.yaml
+          - infra/k8s/streaks-postgres-depl.yaml
+          - infra/k8s/auth-secrets.yaml
+          - infra/k8s/streaks-postgres-secrets.yaml
+          - infra/k8s/mongo-secrets.yaml
+
+  - name: apps
+    deploy:
+      kubectl:
+        manifests:
+          - infra/k8s/auth-depl.yaml
+          - infra/k8s/streaks-depl.yaml
+          - infra/k8s/category-depl.yaml
+          - infra/k8s/unit-depl.yaml
+          - infra/k8s/practice-depl.yaml
+          - infra/k8s/quiz-depl.yaml
+          - infra/k8s/speaking-depl.yaml
+          - infra/k8s/reading-depl.yaml
+          - infra/k8s/listening-depl.yaml
+          - infra/k8s/writing-depl.yaml
+          - infra/k8s/nlp-depl.yaml
+          - infra/k8s/speech-depl.yaml
+          - infra/k8s/kafka-depl.yaml
+          - infra/k8s/zookeeper-depl.yaml
+          - infra/k8s/ingress-srv.yaml
