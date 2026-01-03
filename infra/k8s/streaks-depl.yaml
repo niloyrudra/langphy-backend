@@ -64,19 +64,18 @@ spec:
 
           livenessProbe:
             httpGet:
-              path: /health
+              path: /api/health
               port: 3001
-            initialDelaySeconds: 20
+            initialDelaySeconds: 15
             periodSeconds: 10
 
           readinessProbe:
             httpGet:
-              path: /health
+              path: /api/health
               port: 3001
             initialDelaySeconds: 10
             periodSeconds: 5
-
-
+            
           resources:
             limits:
               cpu: "500m"

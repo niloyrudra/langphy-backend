@@ -1,13 +1,15 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from './app.module.js';
+import { Logger } from "@nestjs/common";
 
 async function bootstrap() {
     const app = await NestFactory.create( AppModule );
 
     app.enableCors();
-    // app.setGlobalPrefix('api');
+    app.setGlobalPrefix('api');
 
-    await app.listen(3001);
+    await app.listen(3001, () => console.log("Streaks Service running on port 3001"));
+
 }
 
 bootstrap();
