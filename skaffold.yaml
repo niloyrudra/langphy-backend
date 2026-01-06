@@ -9,7 +9,7 @@ build:
     push: false
   artifacts:
     - image: niloyrudra/auth
-      context: auth
+      context: services/auth
       docker:
         dockerfile: Dockerfile
       sync:
@@ -18,7 +18,16 @@ build:
             src: 'src/**/*.ts'
     
     - image: niloyrudra/streaks
-      context: streaks
+      context: services/streaks
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'
+    
+    - image: niloyrudra/progress
+      context: services/progress-service
       docker:
         dockerfile: Dockerfile
       sync:
@@ -27,7 +36,7 @@ build:
             src: 'src/**/*.ts'
             
     - image: niloyrudra/category
-      context: category
+      context: services/category
       docker:
         dockerfile: Dockerfile
       sync:
@@ -36,7 +45,7 @@ build:
             src: 'src/**/*.ts'
     
     - image: niloyrudra/unit
-      context: unit
+      context: services/unit
       docker:
         dockerfile: Dockerfile
       sync:
@@ -45,7 +54,7 @@ build:
             src: 'src/**/*.ts'
     
     - image: niloyrudra/practice
-      context: practice
+      context: services/practice
       docker:
         dockerfile: Dockerfile
       sync:
@@ -54,7 +63,7 @@ build:
             src: 'src/**/*.ts'
     
     - image: niloyrudra/quiz
-      context: quiz
+      context: services/quiz
       docker:
         dockerfile: Dockerfile
       sync:
@@ -63,7 +72,7 @@ build:
             src: 'src/**/*.ts'
     
     - image: niloyrudra/speaking
-      context: speaking
+      context: services/speaking
       docker:
         dockerfile: Dockerfile
       sync:
@@ -72,7 +81,7 @@ build:
             src: 'src/**/*.ts'
     
     - image: niloyrudra/reading
-      context: reading
+      context: services/reading
       docker:
         dockerfile: Dockerfile
       sync:
@@ -81,7 +90,7 @@ build:
             src: 'src/**/*.ts'
     
     - image: niloyrudra/listening
-      context: listening
+      context: services/listening
       docker:
         dockerfile: Dockerfile
       sync:
@@ -90,7 +99,7 @@ build:
             src: 'src/**/*.ts'
     
     - image: niloyrudra/writing
-      context: writing
+      context: services/writing
       docker:
         dockerfile: Dockerfile
       sync:
@@ -99,7 +108,7 @@ build:
             src: 'src/**/*.ts'
             
     - image: niloyrudra/nlp-service
-      context: nlp-service
+      context: services/nlp-service
       docker:
         dockerfile: Dockerfile
 
@@ -108,30 +117,42 @@ profiles:
     deploy:
       kubectl:
         manifests:
-          - infra/k8s/auth-postgres-pvc.yaml
-          - infra/k8s/auth-postgres-depl.yaml
-          - infra/k8s/streaks-postgres-pvc.yaml
-          - infra/k8s/streaks-postgres-depl.yaml
-          - infra/k8s/auth-secrets.yaml
-          - infra/k8s/streaks-postgres-secrets.yaml
+          - infra/k8s/auth/auth-postgres-pvc.yaml
+          - infra/k8s/auth/auth-postgres-depl.yaml
+          - infra/k8s/streaks/streaks-postgres-pvc.yaml
+          - infra/k8s/streaks/streaks-postgres-depl.yaml
+          - infra/k8s/progress/progress-postgres-pvc.yaml
+          - infra/k8s/progress/progress-postgres-depl.yaml
+          - infra/k8s/auth/auth-secrets.yaml
+          - infra/k8s/streaks/streaks-postgres-secrets.yaml
+          - infra/k8s/progress/progress-postgres-secrets.yaml
           - infra/k8s/mongo-secrets.yaml
+          - infra/k8s/category/category-mongo-secrets.yaml
+          - infra/k8s/unit/unit-mongo-secrets.yaml
+          - infra/k8s/practice/practice-mongo-secrets.yaml
+          - infra/k8s/quiz/quiz-mongo-secrets.yaml
+          - infra/k8s/reading/reading-mongo-secrets.yaml
+          - infra/k8s/listening/listening-mongo-secrets.yaml
+          - infra/k8s/speaking/speaking-mongo-secrets.yaml
+          - infra/k8s/writing/writing-mongo-secrets.yaml
 
   - name: apps
     deploy:
       kubectl:
         manifests:
-          - infra/k8s/auth-depl.yaml
-          - infra/k8s/streaks-depl.yaml
-          - infra/k8s/category-depl.yaml
-          - infra/k8s/unit-depl.yaml
-          - infra/k8s/practice-depl.yaml
-          - infra/k8s/quiz-depl.yaml
-          - infra/k8s/speaking-depl.yaml
-          - infra/k8s/reading-depl.yaml
-          - infra/k8s/listening-depl.yaml
-          - infra/k8s/writing-depl.yaml
-          - infra/k8s/nlp-depl.yaml
-          - infra/k8s/speech-depl.yaml
-          - infra/k8s/kafka-depl.yaml
-          - infra/k8s/zookeeper-depl.yaml
-          - infra/k8s/ingress-srv.yaml
+          - infra/k8s/auth/auth-depl.yaml
+          - infra/k8s/streaks/streaks-depl.yaml
+          - infra/k8s/progress/progress-depl.yaml
+          - infra/k8s/category/category-depl.yaml
+          - infra/k8s/unit/unit-depl.yaml
+          - infra/k8s/practice/practice-depl.yaml
+          - infra/k8s/quiz/quiz-depl.yaml
+          - infra/k8s/speaking/speaking-depl.yaml
+          - infra/k8s/reading/reading-depl.yaml
+          - infra/k8s/listening/listening-depl.yaml
+          - infra/k8s/writing/writing-depl.yaml
+          - infra/k8s/nlp/nlp-depl.yaml
+          - infra/k8s/speech/speech-depl.yaml
+          - infra/k8s/kafka/kafka-depl.yaml
+          - infra/k8s/kafka/zookeeper-depl.yaml
+          - infra/k8s/ingress/ingress-srv.yaml
