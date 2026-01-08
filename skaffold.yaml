@@ -43,6 +43,15 @@ build:
         manual:
           - dest: .
             src: 'src/**/*.ts'
+    
+    - image: niloyrudra/settings
+      context: services/settings
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'
             
     - image: niloyrudra/category
       context: services/category
@@ -134,6 +143,8 @@ profiles:
           # - infra/k8s/progress/progress-postgres-depl.yaml
           - infra/k8s/profile/profile-postgres-pvc.yaml
           - infra/k8s/profile/profile-postgres-depl.yaml
+          - infra/k8s/settings/settings-postgres-pvc.yaml
+          - infra/k8s/settings/settings-postgres-depl.yaml
           - infra/k8s/auth/auth-secrets.yaml
           - infra/k8s/streaks/streaks-postgres-secrets.yaml
           - infra/k8s/progress/progress-postgres-secrets.yaml
@@ -153,6 +164,7 @@ profiles:
         manifests:
           - infra/k8s/auth/auth-depl.yaml
           - infra/k8s/profile/profile-depl.yaml
+          - infra/k8s/settings/settings-depl.yaml
           # - infra/k8s/streaks/streaks-depl.yaml
           # - infra/k8s/progress/progress-depl.yaml
           - infra/k8s/category/category-depl.yaml

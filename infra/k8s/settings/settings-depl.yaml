@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: settings-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: settings
+  template:
+    metadata:
+      labels:
+        app: settings
+    spec:
+      containers:
+        - name: settings
+          image: niloyrudra/settings
+          env:
+            - name: PG_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: settings-secrets
+                  key: PG_HOST
+            - name: PG_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: settings-secrets
+                  key: PG_PORT
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: settings-secrets
+                  key: PG_USER
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: settings-secrets
+                  key: PG_PASSWORD
+            - name: PG_DB
+              valueFrom:
+                secretKeyRef:
+                  name: settings-secrets
+                  key: PG_DB
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: settings-srv
+spec:
+  selector:
+    app: settings
+  ports:
+    - name: settings
+      protocol: TCP
+      port: 3005
+      targetPort: 3005
+
+
