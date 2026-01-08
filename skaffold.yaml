@@ -137,8 +137,8 @@ profiles:
         manifests:
           - infra/k8s/auth/auth-postgres-pvc.yaml
           - infra/k8s/auth/auth-postgres-depl.yaml
-          # - infra/k8s/streaks/streaks-postgres-pvc.yaml
-          # - infra/k8s/streaks/streaks-postgres-depl.yaml
+          - infra/k8s/streaks/streaks-postgres-pvc.yaml
+          - infra/k8s/streaks/streaks-postgres-depl.yaml
           # - infra/k8s/progress/progress-postgres-pvc.yaml
           # - infra/k8s/progress/progress-postgres-depl.yaml
           - infra/k8s/profile/profile-postgres-pvc.yaml
@@ -165,7 +165,7 @@ profiles:
           - infra/k8s/auth/auth-depl.yaml
           - infra/k8s/profile/profile-depl.yaml
           - infra/k8s/settings/settings-depl.yaml
-          # - infra/k8s/streaks/streaks-depl.yaml
+          - infra/k8s/streaks/streaks-depl.yaml
           # - infra/k8s/progress/progress-depl.yaml
           - infra/k8s/category/category-depl.yaml
           - infra/k8s/unit/unit-depl.yaml

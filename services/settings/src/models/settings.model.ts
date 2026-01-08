@@ -13,6 +13,13 @@ export interface UserSettings {
 export interface SettingsData {
     user_id: string;
     theme?: string;
+    sound_effect?: boolean;
+    speaking_service?: boolean;
+    reading_service?: boolean;
+    writing_service?: boolean;
+    listening_service?: boolean;
+    practice_service?: boolean;
+    quiz_service?: boolean;
     notifications?: boolean;
     language?: string;
 }
@@ -32,10 +39,22 @@ export class SettingsModel {
     static async createSettings(data: SettingsData): Promise<UserSettings> {
         try {
             const result = await pgPool.query(
-                `INSERT INTO lp_settings (user_id, theme, notifications, language)
-                 VALUES ($1, COALESCE($2, 'light'), COALESCE($3, true), COALESCE($4, 'en'))
+                `INSERT INTO lp_settings (user_id,theme,sound_effect,speaking_service,reading_service,writing_service,listening_service,practice_service,quiz_service,notifications,language)
+                 VALUES ($1, COALESCE($2, 'light'), COALESCE($3, true), COALESCE($4, true), COALESCE($5, true), COALESCE($6, true), COALESCE($7, true), COALESCE($8, true), COALESCE($9, true), COALESCE($10, true), COALESCE($11, 'en'))
                  RETURNING *`,
-                [data.user_id, data.theme, data.notifications, data.language]
+                [
+                    data.user_id,
+                    data.theme,
+                    data.sound_effect,
+                    data.speaking_service,
+                    data.reading_service,
+                    data.writing_service,
+                    data.listening_service,
+                    data.practice_service,
+                    data.quiz_service,
+                    data.notifications,
+                    data.language
+                ]
             );
             return result.rows[0];
         } catch (err: any) {
@@ -52,12 +71,31 @@ export class SettingsModel {
         const result = await pgPool.query(
             `UPDATE lp_settings
              SET theme = COALESCE($1, theme),
-                 notifications = COALESCE($2, notifications),
-                 language = COALESCE($3, language),
+                 speaking_service = COALESCE($2, speaking_service),
+                 reading_service = COALESCE($3, notifications),
+                 writing_service = COALESCE($4, writing_service),
+                 listening_service = COALESCE($5, listening_service),
+                 practice_service = COALESCE($6, practice_service),
+                 quiz_service = COALESCE($7, quiz_service),
+                 sound_effect = COALESCE($8, sound_effect),
+                 notifications = COALESCE($9, notifications),
+                 language = COALESCE($10, language),
                  updated_at = now()
-             WHERE user_id = $4
+             WHERE user_id = $11
              RETURNING *`,
-            [data.theme, data.notifications, data.language, userId]
+            [
+                data.theme,
+                data.speaking_service,
+                data.reading_service,
+                data.writing_service,
+                data.listening_service,
+                data.practice_service,
+                data.quiz_service,
+                data.sound_effect,
+                data.notifications,
+                data.language,
+                userId
+            ]
         );
 
         if (!result.rows[0]) {

@@ -1,6 +1,6 @@
 import Express from "express";
 import "express-async-errors";
-import { SettingsRouter } from "./routes/settings.js";
+import { StreaksRouter } from "./routes/streaks.js";
 import { errorHandler } from "./middlewares/error-handler.js";
 import pkg from "body-parser";
 import { dbRouter } from "./routes/db-route.js";
@@ -12,8 +12,8 @@ const app = Express();
 app.use( json() );
 
 app.use( dbRouter );
-app.use( SettingsRouter );
+app.use( StreaksRouter );
 
 app.use( errorHandler );
 
-app.listen( 3005, () => console.log("Settings Service is running on port 3005") );
+app.listen( 3001, () => console.log("Streaks Service is running on port 3001") );

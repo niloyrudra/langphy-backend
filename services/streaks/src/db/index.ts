@@ -9,4 +9,4 @@ export const pgPool = new Pool({
     ssl: false,
 });
 
-pgPool.on( 'connect', () => console.log( "✅ Connect to Settings PostgreSQl" ));
+pgPool.on( 'connect', () => console.log( "✅ Connect to Streaks PostgreSQl" ));

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streaks-postgres-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streaks-postgres
+  template:
+    metadata:
+      labels:
+        app: streaks-postgres
+    spec:
+      containers:
+      - name: streaks-postgres
+        image: postgres:15
+        resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+        ports:
+        - containerPort: 5432
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: streaks-postgres-secrets
+                key: DATABASE_URL
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                name: streaks-postgres-secrets
+                key: POSTGRES_DB
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: streaks-postgres-secrets
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: streaks-postgres-secrets
+                key: POSTGRES_PASSWORD
+        volumeMounts:
+        - name: streaks-postgres-srv
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: streaks-postgres-srv
+        persistentVolumeClaim:
+          claimName: streaks-postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: streaks-postgres-srv
+spec:
+  selector:
+    app: streaks-postgres
+  ports:
+    - name: db
+      protocol: TCP
+      port: 5432
+      targetPort: 5432

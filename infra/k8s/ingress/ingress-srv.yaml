@@ -27,6 +27,14 @@ spec:
                 port:
                   number: 3001
 
+          - path: /api/settings/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: settings-srv
+                port:
+                  number: 3005
+
           # - path: /api/health
           #   pathType: Prefix
           #   backend:
