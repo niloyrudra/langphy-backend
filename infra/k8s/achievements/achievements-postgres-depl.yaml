@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: achievements-postgres-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: achievements-postgres
+  template:
+    metadata:
+      labels:
+        app: achievements-postgres
+    spec:
+      containers:
+        - name: achievements-postgres
+          image: postgres:15
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: achievements-secrets
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: achievements-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: achievements-secrets
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: achievements-postgres-srv
+              mountPath: /var/lib/postgresql/data
+
+      volumes:
+        - name: achievements-postgres-srv
+          persistentVolumeClaim:
+            claimName: achievements-postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: achievements-postgres-srv
+spec:
+  selector:
+    app: achievements-postgres
+  ports:
+    - name: db
+      protocol: TCP
+      port: 5432
+      targetPort: 5432

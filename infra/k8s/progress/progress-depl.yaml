@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: progress-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: progress
+  template:
+    metadata:
+      labels:
+        app: progress
+    spec:
+      containers:
+        - name: progress
+          image: niloyrudra/progress
+          env:
+            - name: PG_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: progress-secrets
+                  key: PG_HOST
+
+            - name: PG_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: progress-secrets
+                  key: PG_PORT
+
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: progress-secrets
+                  key: PG_USER
+
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: progress-secrets
+                  key: PG_PASSWORD
+                  
+            - name: PG_DB
+              valueFrom:
+                secretKeyRef:
+                  name: progress-secrets
+                  key: PG_DB
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: progress-srv
+spec:
+  selector:
+    app: progress
+  ports:
+    - name: progress
+      protocol: TCP
+      port: 3002
+      targetPort: 3002
+
+

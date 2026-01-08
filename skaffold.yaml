@@ -17,23 +17,41 @@ build:
           - dest: .
             src: 'src/**/*.ts'
     
-    # - image: niloyrudra/streaks
-    #   context: services/streaks
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - dest: .
-    #         src: 'src/**/*.ts'
+    - image: niloyrudra/achievements
+      context: services/achievements
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'
     
-    # - image: niloyrudra/progress
-    #   context: services/progress-service
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - dest: .
-    #         src: 'src/**/*.ts'
+    - image: niloyrudra/streaks
+      context: services/streaks
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'
+    
+    - image: niloyrudra/progress
+      context: services/progress
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'
+    
+    - image: niloyrudra/performance
+      context: services/performance
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'
     
     - image: niloyrudra/profile
       context: services/profile
@@ -139,15 +157,20 @@ profiles:
           - infra/k8s/auth/auth-postgres-depl.yaml
           - infra/k8s/streaks/streaks-postgres-pvc.yaml
           - infra/k8s/streaks/streaks-postgres-depl.yaml
-          # - infra/k8s/progress/progress-postgres-pvc.yaml
-          # - infra/k8s/progress/progress-postgres-depl.yaml
+          - infra/k8s/progress/progress-postgres-pvc.yaml
+          - infra/k8s/progress/progress-postgres-depl.yaml
+          - infra/k8s/performance/performance-postgres-pvc.yaml
+          - infra/k8s/performance/performance-postgres-depl.yaml
           - infra/k8s/profile/profile-postgres-pvc.yaml
           - infra/k8s/profile/profile-postgres-depl.yaml
           - infra/k8s/settings/settings-postgres-pvc.yaml
           - infra/k8s/settings/settings-postgres-depl.yaml
+          - infra/k8s/achievements/achievements-postgres-pvc.yaml
+          - infra/k8s/achievements/achievements-postgres-depl.yaml
           - infra/k8s/auth/auth-secrets.yaml
           - infra/k8s/streaks/streaks-postgres-secrets.yaml
-          - infra/k8s/progress/progress-postgres-secrets.yaml
+          - infra/k8s/progress/progress-secrets.yaml
+          - infra/k8s/performance/performance-secrets.yaml
           - infra/k8s/mongo-secrets.yaml
           - infra/k8s/category/category-mongo-secrets.yaml
           - infra/k8s/unit/unit-mongo-secrets.yaml
@@ -165,8 +188,10 @@ profiles:
           - infra/k8s/auth/auth-depl.yaml
           - infra/k8s/profile/profile-depl.yaml
           - infra/k8s/settings/settings-depl.yaml
+          - infra/k8s/achievements/achievements-depl.yaml
           - infra/k8s/streaks/streaks-depl.yaml
-          # - infra/k8s/progress/progress-depl.yaml
+          - infra/k8s/progress/progress-depl.yaml
+          - infra/k8s/performance/performance-depl.yaml
           - infra/k8s/category/category-depl.yaml
           - infra/k8s/unit/unit-depl.yaml
           - infra/k8s/practice/practice-depl.yaml

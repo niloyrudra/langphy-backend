@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: achievements-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: achievements
+  template:
+    metadata:
+      labels:
+        app: achievements
+    spec:
+      containers:
+        - name: achievements
+          image: niloyrudra/achievements
+          env:
+            - name: PG_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: achievements-secrets
+                  key: PG_HOST
+
+            - name: PG_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: achievements-secrets
+                  key: PG_PORT
+
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: achievements-secrets
+                  key: PG_USER
+
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: achievements-secrets
+                  key: PG_PASSWORD
+                  
+            - name: PG_DB
+              valueFrom:
+                secretKeyRef:
+                  name: achievements-secrets
+                  key: PG_DB
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: achievements-srv
+spec:
+  selector:
+    app: achievements
+  ports:
+    - name: achievements
+      protocol: TCP
+      port: 3006
+      targetPort: 3006
+
+

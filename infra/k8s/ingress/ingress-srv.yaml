@@ -27,6 +27,30 @@ spec:
                 port:
                   number: 3001
 
+          - path: /api/progress/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: progress-srv
+                port:
+                  number: 3002
+
+          - path: /api/performance/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: performance-srv
+                port:
+                  number: 3003
+
+          - path: /api/profile/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: profile-srv
+                port:
+                  number: 3004
+
           - path: /api/settings/?(.*)
             pathType: ImplementationSpecific
             backend:
@@ -34,6 +58,14 @@ spec:
                 name: settings-srv
                 port:
                   number: 3005
+
+          - path: /api/achievements/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: achievements-srv
+                port:
+                  number: 3006
 
           # - path: /api/health
           #   pathType: Prefix
@@ -43,21 +75,6 @@ spec:
           #       port:
           #         number: 3001
 
-          - path: /api/progress/?(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: progress-srv
-                port:
-                  number: 3002
-
-          - path: /api/profile/?(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: profile-srv
-                port:
-                  number: 3004
 
           # - path: /api/health
           #   pathType: Prefix

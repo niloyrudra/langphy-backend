@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: progress-postgres-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: progress-postgres
+  template:
+    metadata:
+      labels:
+        app: progress-postgres
+    spec:
+      containers:
+        - name: progress-postgres
+          image: postgres:15
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: progress-secrets
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: progress-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: progress-secrets
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: progress-postgres-srv
+              mountPath: /var/lib/postgresql/data
+
+      volumes:
+        - name: progress-postgres-srv
+          persistentVolumeClaim:
+            claimName: progress-postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: progress-postgres-srv
+spec:
+  selector:
+    app: progress-postgres
+  ports:
+    - name: db
+      protocol: TCP
+      port: 5432
+      targetPort: 5432

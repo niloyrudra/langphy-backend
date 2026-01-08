@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: performance-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: performance
+  template:
+    metadata:
+      labels:
+        app: performance
+    spec:
+      containers:
+        - name: performance
+          image: niloyrudra/performance
+          env:
+            - name: PG_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: performance-secrets
+                  key: PG_HOST
+
+            - name: PG_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: performance-secrets
+                  key: PG_PORT
+
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: performance-secrets
+                  key: PG_USER
+
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: performance-secrets
+                  key: PG_PASSWORD
+                  
+            - name: PG_DB
+              valueFrom:
+                secretKeyRef:
+                  name: performance-secrets
+                  key: PG_DB
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: performance-srv
+spec:
+  selector:
+    app: performance
+  ports:
+    - name: performance
+      protocol: TCP
+      port: 3003
+      targetPort: 3003
+
+

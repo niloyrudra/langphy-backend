@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: performance-postgres-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: performance-postgres
+  template:
+    metadata:
+      labels:
+        app: performance-postgres
+    spec:
+      containers:
+        - name: performance-postgres
+          image: postgres:15
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: performance-secrets
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: performance-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: performance-secrets
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: performance-postgres-srv
+              mountPath: /var/lib/postgresql/data
+
+      volumes:
+        - name: performance-postgres-srv
+          persistentVolumeClaim:
+            claimName: performance-postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: performance-postgres-srv
+spec:
+  selector:
+    app: performance-postgres
+  ports:
+    - name: db
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
