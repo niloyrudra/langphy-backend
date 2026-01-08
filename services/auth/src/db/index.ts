@@ -10,5 +10,5 @@ export const pgPool = new Pool({
 });
 
 pgPool.on('connect', () => {
-  console.log('✅ Connected to PostgreSQL');
+  console.log('✅ Connected to User PostgreSQL');
 });

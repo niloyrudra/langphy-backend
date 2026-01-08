@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profile-postgres-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: profile-postgres
+  template:
+    metadata:
+      labels:
+        app: profile-postgres
+    spec:
+      containers:
+        - name: profile-postgres
+          image: postgres:15
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: profile-secrets
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: profile-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: profile-secrets
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: profile-postgres-srv
+              mountPath: /var/lib/postgresql/data
+
+      volumes:
+        - name: profile-postgres-srv
+          persistentVolumeClaim:
+            claimName: profile-postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: profile-postgres-srv
+spec:
+  selector:
+    app: profile-postgres
+  ports:
+    - name: db
+      protocol: TCP
+      port: 5432
+      targetPort: 5432

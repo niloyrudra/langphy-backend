@@ -36,11 +36,6 @@ export class UserModel {
 
     static async create( email: string, password: string ): Promise<User> {
         const hashedPassword = await Password.toHash(password);
-        // if (!email || !email.includes("@")) {
-        //     throw new Error("INVALID_EMAIL");
-        // }
-
-        // const username = email?.split("@")[0]?.toLowerCase();
         
         try {
             const result = await pgPool.query(

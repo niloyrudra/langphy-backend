@@ -1,0 +1,109 @@
+import type { NextFunction, Request, Response } from "express";
+
+import { ProfileModel } from "../models/profile.model.js";
+import { validationResult } from "express-validator";
+import { BadRequestError } from "../errors/bad-request-errors.js";
+import { RequestValidationError } from "../errors/request-validation-errors.js";
+import { DatabaseConnectionErrors } from "../errors/database-connection-errors.js";
+
+export const getProfileController = async ( req: Request, res: Response, next: NextFunction ) => {
+    const errors = validationResult(req);
+
+    if( ! errors.isEmpty() ) throw new RequestValidationError( errors.array() );
+
+    try {
+        const { userId } = req.params;
+        if(!userId) throw new BadRequestError("No user id is provides.");
+
+        const profile = await ProfileModel.getProfile( userId );
+
+        if( profile ) {
+            res.status(200).send({
+                message: "Profile fetched successfully!",
+                profile: {
+                    id: profile.id,
+                    user_id: userId,
+                    username: profile.username,
+                    first_name: profile.first_name,
+                    last_name: profile.last_name,
+                    profile_image: profile.profile_image,
+                    created_at: profile.created_at
+                }
+            });
+        }
+
+    }
+    catch(err){
+        console.log( "Pofile data fetching failuer error:", err )
+        next(err)
+        // throw new DatabaseConnectionErrors();
+    }
+}
+
+export const updateProfileController = async ( req: Request, res: Response, next: NextFunction ) => {
+    const errors = validationResult(req);
+
+    if( ! errors.isEmpty() ) throw new RequestValidationError( errors.array() );
+
+    try {
+        const updatedData = req.body;
+        const {id} = req.params;
+        if(!id) throw new BadRequestError("No id is provided.");
+
+        const profile = await ProfileModel.updateProfile( id, updatedData );
+
+        if( profile ) {
+            res.status(200).send({
+                message: "Profile updated successfully!",
+                profile: {
+                    id: profile.id,
+                    user_id: profile?.user_id,
+                    username: profile.username,
+                    first_name: profile.first_name,
+                    last_name: profile.last_name,
+                    profile_image: profile.profile_image,
+                    created_at: profile.created_at
+                }
+            });
+        }
+
+    }
+    catch(err){
+        console.log( "Pofile data fetching failuer error:", err )
+        // next(err);
+        // throw new DatabaseConnectionErrors();
+        throw err;
+    }
+}
+
+export const createProfileController = async ( req: Request, res: Response, next: NextFunction ) => {
+    const errors = validationResult(req);
+
+    if( ! errors.isEmpty() ) throw new RequestValidationError( errors.array() );
+
+    const userData = req.body;
+
+    try {
+        const newProfile = await ProfileModel.createProfile( userData );
+
+        if( newProfile ) {
+            res.status(201).send({
+                message: "New Profile created successfully!",
+                profile: {
+                    id: newProfile.id,
+                    username: newProfile.username,
+                    first_name: newProfile.first_name,
+                    last_name: newProfile.last_name,
+                    profile_image: newProfile.profile_image,
+                    created_at: newProfile.created_at
+                }
+            });
+        }
+    }
+    catch(err) {
+        console.log( "Pofile Creation error:", err )
+        throw err;
+        // throw new DatabaseConnectionErrors();
+    }
+
+}

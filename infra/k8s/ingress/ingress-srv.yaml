@@ -43,6 +43,14 @@ spec:
                 port:
                   number: 3002
 
+          - path: /api/profile/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: profile-srv
+                port:
+                  number: 3004
+
           # - path: /api/health
           #   pathType: Prefix
           #   backend:
