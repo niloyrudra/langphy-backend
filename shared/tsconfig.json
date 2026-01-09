@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "outDir": "dist",
+    "rootDir": ".",
+    "declaration": true,
+    "emitDeclarationOnly": false,
+    "strict": true
+  },
+  "include": ["events/**/*.ts", "index.ts"]
+}

@@ -117,4 +117,23 @@ export class ProfileModel {
             throw err;
         }
     }
+
+    static async createProfileIfNotExists(user_id: string, email: string): Promise<UserProfile> {
+        try {
+            const result = await pgPool.query(
+                `INSERT INTO lp_profiles (user_id, username) VALUES ($1, $2) RETURNING * ON CONFLICT (user_id) DO NOTHING`,
+                [user_id, email]
+            );
+    
+            return result.rows[0];
+        }
+        catch( err: any ) {
+            console.error("Create profile error:", err);
+            // if (err?.code === "23505") {
+                // unique_violation
+                // throw new Error("Create profile error", err);
+            // }
+            throw err;
+        }
+    }
 }

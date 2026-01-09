@@ -16,6 +16,9 @@ spec:
         - name: settings
           image: niloyrudra/settings
           env:
+            - name: SERVICE_NAME
+              value: settings-service
+
             - name: PG_HOST
               valueFrom:
                 secretKeyRef:

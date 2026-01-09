@@ -16,6 +16,9 @@ spec:
         - name: profile
           image: niloyrudra/profile
           env:
+            - name: SERVICE_NAME
+              value: profile-service
+
             - name: PG_HOST
               valueFrom:
                 secretKeyRef:

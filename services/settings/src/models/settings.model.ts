@@ -66,6 +66,22 @@ export class SettingsModel {
         }
     }
 
+    static async createSettingsIfNotExists( user_id: string ): Promise<UserSettings> {
+        try {
+            const result = await pgPool.query(
+                `INSERT INTO lp_settings (user_id, language, theme) VALUES ($1, 'en', 'light') RETURNING * ON CONFLICT (user_id) DO NOTHING`,
+                [user_id]
+            );
+            return result.rows[0];
+        } catch (err: any) {
+            // Handle unique user_id violation (duplicate row)
+            if (err.code === "23505") {
+                throw new Error("Settings already exist for this user.");
+            }
+            throw err;
+        }
+    }
+
     // Update settings
     static async updateSettings(userId: string, data: SettingsData): Promise<UserSettings> {
         const result = await pgPool.query(
