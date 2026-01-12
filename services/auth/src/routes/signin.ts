@@ -1,8 +1,7 @@
 import { Router } from "express";
-import type { NextFunction, Request, Response } from "express";
-import { body, validationResult } from "express-validator";
-import { RequestValidationError } from "../errors/request-validation-errors.js";
+import { body } from "express-validator";
 import { signinController } from "../controllers/signin.controller.js";
+import { validateAuth } from "../middlewares/validate-auth.js";
 
 const router = Router();
 
@@ -17,15 +16,7 @@ router.post(
       .notEmpty()
       .withMessage("Password must be supplied")
   ],
-  async (req: Request, _res: Response, next: NextFunction) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        throw new RequestValidationError(errors.array());
-    }
-
-    next();
-  },
+  validateAuth,
   signinController
 );
 

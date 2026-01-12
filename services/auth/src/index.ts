@@ -10,6 +10,8 @@ import { errorHandler } from "./middlewares/error-handler.js";
 // import { NotFoundError } from "./errors/no-find-errors.js";
 import { dbRouter } from "./routes/db-route.js";
 import { initProducer } from "./kafka/producer.js";
+import { resetPasswordByEmailRouter } from "./routes/reset-password.js";
+import { deleteAccountRouter } from "./routes/delete-account.js";
 
 const app = express();
 
@@ -20,6 +22,8 @@ app.use( currentUserRouter );
 app.use( signInRouter );
 app.use( signOutRouter );
 app.use( signUpRouter );
+app.use( resetPasswordByEmailRouter );
+app.use( deleteAccountRouter );
 
 app.use( errorHandler );
 

@@ -58,6 +58,80 @@ export class UserModel {
         }
     }
 
+    static async resetPasswordByEmail( email: string, newPassword: string ): Promise<PublicUser> {
+        const hashedPassword = await Password.toHash(newPassword);
+        
+        try {
+            const result = await pgPool.query(
+                `
+                UPDATE lp_users
+                SET password = $1
+                    updated_at = now()
+                WHERE email = $2
+                RETURNING id, email, username, first_name, last_name, created_at, updated_at
+                `,
+                [hashedPassword, email]
+            );
+
+            if (result.rowCount === 0) {
+                throw new BadRequestError("User not found!");
+            }
+
+            return result.rows[ 0 ];
+        }
+        catch( err: any ) {
+            // if (err?.code === "23505") {
+            //     // unique_violation
+            //     throw new BadRequestError("Email");
+            // }
+            throw err;
+        }
+    }
+
+    static async resetPasswordByUserId(
+        userId: string,
+        newPassword: string
+    ): Promise<PublicUser> {
+        const hashedPassword = await Password.toHash(newPassword);
+
+        const result = await pgPool.query(
+            `
+            UPDATE lp_users
+            SET password = $1,
+                updated_at = NOW()
+            WHERE id = $2
+            RETURNING id, email, username, first_name, last_name, created_at, updated_at
+            `,
+            [hashedPassword, userId]
+        );
+
+        if (result.rowCount === 0) {
+            throw new BadRequestError("User not found!");
+        }
+
+        return result.rows[0];
+    }
+
+    static async delete(
+        userId: string,
+    ): Promise<PublicUser> {
+
+        const result = await pgPool.query(
+            `
+            DELETE FROM lp_users
+            WHERE id = $1
+            RETURNING 1
+            `,
+            [userId]
+        );
+
+        if (result.rowCount === 0) {
+            throw new BadRequestError("Account Deletion failed!");
+        }
+
+        return result.rows[0];
+    }
+
     static async update( userId: string, updates: UpdateUserProfileInput) {
         const fields: string[] = [];
         const values: any[] = [];
