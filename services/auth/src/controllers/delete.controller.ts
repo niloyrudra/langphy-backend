@@ -4,6 +4,7 @@ import { validationResult } from "express-validator";
 import { RequestValidationError } from "../errors/request-validation-errors.js";
 import { BadRequestError } from "../errors/bad-request-errors.js";
 import { UserModel } from "../models/user.model.js";
+import { publishUserDeleted } from "../kafka/producer.js";
 
 export const deleteController = async ( req: Request, res: Response ) => {
     const errors = validationResult(req);
@@ -26,22 +27,22 @@ export const deleteController = async ( req: Request, res: Response ) => {
          * This initializes user-related services (profile, settings, etc.)
          * Consumers must be idempotent
          */
-        // try {
-        //     await publishUserDeleted({
-        //         event_id: uuidv4(),
-        //         event_type: "user.deleted",
-        //         event_version: 1,
-        //         occurred_at: new Date().toISOString(),
-        //         user_id: userId,
-        //         payload: {
-        //             userId,
-        //             provider: null,
-        //         },
-        //     });
-        // }
-        // catch(eventError) {
-        //     console.error( "Kafka publish failed:", eventError );
-        // }
+        try {
+            await publishUserDeleted({
+                event_id: uuidv4(),
+                event_type: "user.deleted",
+                event_version: 1,
+                occurred_at: new Date().toISOString(),
+                user_id: userId, // req.currentUser!.id
+                payload: {
+                    reason: "user_requested",
+                    deleted_by: "user",
+                },
+            });
+        }
+        catch(eventError) {
+            console.error( "Kafka publish failed:", eventError );
+        }
         /** KAFKA */
 
         res.status(200).send({

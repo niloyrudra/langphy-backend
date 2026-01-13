@@ -6,8 +6,8 @@ export const getAchievementsController = async ( req: Request, res: Response, ne
     try {
         const {userId} = req.params;
         if(!userId) throw new BadRequestError("No user id is provides.");
-        
-        const achievements = await AchievementModel.getUserAchievements( userId );
+        const user_id = typeof userId == 'string' ? userId : '';
+        const achievements = await AchievementModel.getUserAchievements( user_id );
         res.status(200).json({ achievements });
     }
     catch(err) {

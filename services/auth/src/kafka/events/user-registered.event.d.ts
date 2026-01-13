@@ -1,0 +1,8 @@
+import type { BaseEvent } from "./base-event.js";
+export interface UserRegisteredEvent extends BaseEvent<{
+    email: string;
+    provider: "email" | "google" | "facebook" | "apple";
+}> {
+    event_type: "user.registered";
+}
+//# sourceMappingURL=user-registered.event.d.ts.map

@@ -9,135 +9,135 @@ build:
     push: false
   artifacts:
     - image: niloyrudra/auth
-      context: services/auth
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/auth/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
     
     - image: niloyrudra/achievements
-      context: services/achievements
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/achievements/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
     
     - image: niloyrudra/streaks
-      context: services/streaks
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/streaks/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
     
     - image: niloyrudra/progress
-      context: services/progress
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/progress/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
     
     - image: niloyrudra/performance
-      context: services/performance
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/performance/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
     
     - image: niloyrudra/profile
-      context: services/profile
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/profile/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
     
     - image: niloyrudra/settings
-      context: services/settings
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/settings/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
             
     - image: niloyrudra/category
-      context: services/category
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/category/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
     
     - image: niloyrudra/unit
-      context: services/unit
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/unit/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
     
     - image: niloyrudra/practice
-      context: services/practice
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/practice/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
     
     - image: niloyrudra/quiz
-      context: services/quiz
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/quiz/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
     
     - image: niloyrudra/speaking
-      context: services/speaking
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/speaking/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
     
     - image: niloyrudra/reading
-      context: services/reading
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/reading/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
     
     - image: niloyrudra/listening
-      context: services/listening
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/listening/Dockerfile
       sync:
         manual:
           - dest: .
             src: 'src/**/*.ts'
     
     - image: niloyrudra/writing
-      context: services/writing
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: services/writing/Dockerfile
       sync:
         manual:
           - dest: .
@@ -145,6 +145,11 @@ build:
             
     - image: niloyrudra/nlp-service
       context: services/nlp-service
+      docker:
+        dockerfile: Dockerfile
+            
+    - image: niloyrudra/speech-service
+      context: services/speech-service
       docker:
         dockerfile: Dockerfile
 

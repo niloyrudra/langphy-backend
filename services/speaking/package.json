@@ -1,5 +1,5 @@
 {
-  "name": "speaking",
+  "name": "@langphy/speaking",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
@@ -14,13 +14,16 @@
     "strict": true
   },
   "scripts": {
-    "start": "node --loader ts-node/esm --watch src/index.ts"
+    "build": "tsc -b",
+    "dev": "nodemon src/index.ts",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "Niloy Rudra",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@langphy/shared": "file:../../shared",
     "cors": "^2.8.5",
     "express": "^4.22.1",
     "express-async-errors": "^3.1.1",

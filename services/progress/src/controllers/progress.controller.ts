@@ -56,8 +56,8 @@ export const getUserProgressController = async (
         if (!userId) {
             throw new BadRequestError("User ID is required");
         }
-
-        const progress = await ProgressModel.getUserProgress(userId);
+        const user_id = typeof userId == 'string' ? userId : '';
+        const progress = await ProgressModel.getUserProgress(user_id);
 
         res.status(200).send({
             user_id: userId,

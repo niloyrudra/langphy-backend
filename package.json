@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "workspaces": [
+    "services/*",
+    "shared"
+  ],
+  "scripts": {
+    "build": "npm run build -w shared && npm run build -w services/auth",
+    "dev": "npm run dev -w services/auth",
+    "clean": "rm -rf node_modules services/**/node_modules shared/node_modules"
+  }
+}

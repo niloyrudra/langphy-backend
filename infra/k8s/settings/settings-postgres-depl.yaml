@@ -15,6 +15,7 @@ spec:
       containers:
         - name: settings-postgres
           image: postgres:15
+          imagePullPolicy: IfNotPresent
           resources:
             limits:
               memory: "128Mi"

@@ -1,13 +1,29 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ES2022",
-    "moduleResolution": "bundler",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
     "outDir": "dist",
     "rootDir": ".",
-    "declaration": true,
-    "emitDeclarationOnly": false,
+    "module": "nodenext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
     "strict": true
   },
-  "include": ["events/**/*.ts", "index.ts"]
+  "include": ["events"]
 }
+
+
+// {
+//   "compilerOptions": {
+//     "target": "ES2022",
+//     "module": "ES2022",
+//     "moduleResolution": "bundler",
+//     "outDir": "dist",
+//     "rootDir": ".",
+//     "declaration": true,
+//     "emitDeclarationOnly": false,
+//     "strict": true
+//   },
+//   "include": ["events/**/*.ts", "index.ts"]
+// }

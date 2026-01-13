@@ -1,10 +1,27 @@
-FROM node:alpine
+FROM node:20-alpine
 
 WORKDIR /app
-COPY package.json .
-COPY tsconfig.json .
+
+# copy shared ONCE
+COPY shared ./shared
+
+# copy service
+COPY services/streaks ./services/streaks
+
+WORKDIR /app/services/streaks
+
 RUN npm install
+RUN npm run build
 
-COPY . .
+CMD ["node", "dist/index.js"]
 
-CMD [ "npm", "start" ]
+# FROM node:alpine
+
+# WORKDIR /app
+# COPY package.json .
+# COPY tsconfig.json .
+# RUN npm install
+
+# COPY . .
+
+# CMD [ "npm", "start" ]

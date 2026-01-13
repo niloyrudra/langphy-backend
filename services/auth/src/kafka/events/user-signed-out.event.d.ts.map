@@ -1,0 +1,1 @@
+{"version":3,"file":"user-signed-out.event.d.ts","sourceRoot":"","sources":["user-signed-out.event.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,SAAS,EAAE,MAAM,iBAAiB,CAAC;AAEjD,MAAM,WAAW,kBAAmB,SAAQ,SAAS,CAAC;IAClD,UAAU,EAAE,MAAM,CAAC;IACnB,MAAM,CAAC,EAAE,MAAM,CAAC;CACnB,CAAC;IACE,UAAU,EAAE,iBAAiB,CAAC;CACjC"}

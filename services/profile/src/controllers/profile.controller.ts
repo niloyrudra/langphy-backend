@@ -14,8 +14,8 @@ export const getProfileController = async ( req: Request, res: Response, next: N
     try {
         const { userId } = req.params;
         if(!userId) throw new BadRequestError("No user id is provides.");
-
-        const profile = await ProfileModel.getProfile( userId );
+        const user_id = typeof userId == 'string' ? userId : '';
+        const profile = await ProfileModel.getProfile( user_id );
 
         if( profile ) {
             res.status(200).send({
@@ -49,8 +49,8 @@ export const updateProfileController = async ( req: Request, res: Response, next
         const updatedData = req.body;
         const {id} = req.params;
         if(!id) throw new BadRequestError("No id is provided.");
-
-        const profile = await ProfileModel.updateProfile( id, updatedData );
+        const user_id = typeof id == 'string' ? id : '';
+        const profile = await ProfileModel.updateProfile( user_id, updatedData );
 
         if( profile ) {
             res.status(200).send({

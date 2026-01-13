@@ -1,0 +1,1 @@
+{"version":3,"file":"user-deleted.event.d.ts","sourceRoot":"","sources":["user-deleted.event.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,SAAS,EAAE,MAAM,iBAAiB,CAAC;AAEjD,MAAM,WAAW,gBAAiB,SAAQ,SAAS,CAAC;IAChD,MAAM,CAAC,EAAE,MAAM,CAAC;IAChB,UAAU,EAAE,MAAM,GAAG,OAAO,GAAG,QAAQ,CAAC;CAC3C,CAAC;IACE,UAAU,EAAE,cAAc,CAAC;CAC9B"}

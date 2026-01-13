@@ -1,0 +1,172 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    # nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  ingressClassName: nginx
+
+  tls:
+    - hosts:
+        - api.langphy.com
+      secretName: langphy-tls
+
+  rules:
+    - host: api.langphy.com
+      http:
+        paths:
+          - path: /api/users/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: auth-srv
+                port:
+                  number: 3000
+
+          - path: /api/streaks/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: streaks-srv
+                port:
+                  number: 3001
+
+          - path: /api/progress/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: progress-srv
+                port:
+                  number: 3002
+
+          - path: /api/performance/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: performance-srv
+                port:
+                  number: 3003
+
+          - path: /api/profile/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: profile-srv
+                port:
+                  number: 3004
+
+          - path: /api/settings/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: settings-srv
+                port:
+                  number: 3005
+
+          - path: /api/achievements/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: achievements-srv
+                port:
+                  number: 3006
+
+          # - path: /api/health
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: streaks-srv
+          #       port:
+          #         number: 3001
+
+
+          # - path: /api/health
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: progress-srv
+          #       port:
+          #         number: 3002
+
+          - path: /api/category/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: category-srv
+                port:
+                  number: 4000
+          
+          - path: /api/unit/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: unit-srv
+                port:
+                  number: 4001
+
+          - path: /api/practices/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: practice-srv
+                port:
+                  number: 4002
+
+          - path: /api/quizzes/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: quiz-srv
+                port:
+                  number: 4003
+
+          - path: /api/speaking/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: speaking-srv
+                port:
+                  number: 4004
+
+          - path: /api/reading/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: reading-srv
+                port:
+                  number: 4005
+
+          - path: /api/writing/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: writing-srv
+                port:
+                  number: 4006
+
+          - path: /api/listening/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: listening-srv
+                port:
+                  number: 4007
+
+          - path: /api/nlp/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: nlp-srv
+                port:
+                  number: 8000
+
+          - path: /api/speech/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: speech-srv
+                port:
+                  number: 8001

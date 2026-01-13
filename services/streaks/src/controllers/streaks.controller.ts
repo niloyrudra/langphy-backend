@@ -8,7 +8,8 @@ export const getStreakController = async (req: Request, res: Response, next: Nex
         if (!userId) {
             return res.status(400).json({ message: "userId is required" });
         }
-        const streak = await StreakModel.getStreak(userId);
+        const user_id = typeof userId == 'string' ? userId : '';
+        const streak = await StreakModel.getStreak(user_id);
 
         if (!streak) {
             return res.status(404).json({ message: "Streak not found" });
@@ -30,7 +31,8 @@ export const createStreakController = async (req: Request, res: Response, next: 
         if (!userId) {
             return res.status(400).json({ message: "userId is required" });
         }
-        const streak = await StreakModel.createStreak(userId);
+        const user_id = typeof userId == 'string' ? userId : '';
+        const streak = await StreakModel.createStreak(user_id);
 
         res.status(201).json({
             message: "Streak created successfully",
@@ -56,7 +58,8 @@ export const updateStreakController = async (req: Request, res: Response, next: 
         if (!userId) {
             return res.status(400).json({ message: "userId is required" });
         }
-        const streak = await StreakModel.updateStreak(userId);
+        const user_id = typeof userId == 'string' ? userId : '';
+        const streak = await StreakModel.updateStreak(user_id);
 
         res.status(200).json({
             message: "Streak updated successfully",

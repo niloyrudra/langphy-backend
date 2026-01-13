@@ -21,9 +21,9 @@ export const updatePerformanceController = async (
         if (!userId || score === undefined) {
             throw new BadRequestError("User ID and score are required");
         }
-
+        const user_id = typeof userId == 'string' ? userId : '';
         const performance = await PerformanceModel.updatePerformance(
-            userId,
+            user_id,
             score
         );
 
@@ -47,8 +47,8 @@ export const getPerformanceController = async (
         if (!userId) {
             throw new BadRequestError("User ID is required");
         }
-
-        const performance = await PerformanceModel.getPerformance(userId);
+        const user_id = typeof userId == 'string' ? userId : '';
+        const performance = await PerformanceModel.getPerformance(user_id);
 
         res.status(200).send({
             performance,

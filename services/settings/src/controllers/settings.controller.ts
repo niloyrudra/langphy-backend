@@ -26,8 +26,8 @@ export const getSettingsController = async (req: Request, res: Response, next: N
     try {
         const { userId } = req.params;
         if (!userId) return res.status(400).json({ message: "userId is required" });
-        
-        const settings = await SettingsModel.getSettings(userId);
+        const user_id = typeof userId == 'string' ? userId : '';
+        const settings = await SettingsModel.getSettings(user_id);
         if (!settings) return res.status(404).json({ message: "Settings not found" });
         res.status(200).json({ message: "Settings fetched successfully", settings });
     } catch (err) {
@@ -59,8 +59,8 @@ export const updateSettingsController = async (req: Request, res: Response, next
 
         const { userId } = req.params;
         if (!userId) return res.status(400).json({ message: "userId is required" });
-        
-        const settings = await SettingsModel.updateSettings(userId, req.body);
+        const user_id = typeof userId == 'string' ? userId : '';
+        const settings = await SettingsModel.updateSettings(user_id, req.body);
         res.status(200).json({ message: "Settings updated successfully", settings });
     } catch (err) {
         console.error("Update settings error:", err);
