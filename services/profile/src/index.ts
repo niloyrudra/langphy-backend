@@ -6,6 +6,7 @@ import pkg from "body-parser";
 import { ProfileCreationRouter } from "./routes/profile-create.js";
 import { ProfileUpdateRouter } from "./routes/profile-update.js";
 import { dbRouter } from "./routes/db-route.js";
+import { startProfileConsumers } from "./kafka/consumer.js";
 const {json} = pkg;
 // import cors from 'cors';
 
@@ -20,4 +21,14 @@ app.use( ProfileUpdateRouter );
 
 app.use( errorHandler );
 
-app.listen( 3004, () => console.log("Profile Service is running on port 3004") );
+const start = async () => {
+    try {
+        await startProfileConsumers();
+    }
+    catch(err) {
+        console.error("Profile Kafka failed:", err);
+    }
+    app.listen( 3004, () => console.log("Profile Service is running on port 3004") );
+}
+
+start();

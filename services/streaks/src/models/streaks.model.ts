@@ -39,6 +39,30 @@ export class StreakModel {
         }
     }
 
+    // Create streak row
+    static async initIfNotExists(userId: string): Promise<UserStreak | undefined> {
+        const result = await pgPool.query(
+            `SELECT * FROM lp_streaks WHERE user_id = $1`,
+            [userId]
+        );
+        if( result.rows[0] ) return;
+
+        try {
+            const result = await pgPool.query(
+                `INSERT INTO lp_streaks (user_id)
+                 VALUES ($1)
+                 RETURNING *`,
+                [userId]
+            );
+            return result.rows[0];
+        } catch (err: any) {
+            if (err.code === "23505") {
+                throw new Error("Streak already exists for this user");
+            }
+            throw err;
+        }
+    }
+
     // Update streak on daily activity
     static async updateStreak(userId: string): Promise<UserStreak> {
         const result = await pgPool.query(

@@ -1,6 +1,6 @@
 import { Kafka } from "kafkajs";
 
 export const kafka = new Kafka({
-  clientId: 'auth-service',
-  brokers: ["kafka-srv:9092"],
+  clientId: process.env.SERVICE_NAME ?? 'auth-service',
+  brokers: [ process.env.KAFKA_BROKER ?? "kafka-srv:9092"],
 });

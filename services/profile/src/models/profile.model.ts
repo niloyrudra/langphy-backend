@@ -118,8 +118,26 @@ export class ProfileModel {
         }
     }
 
+    static async profileIfNotExists(user_id: string): Promise<UserProfile | undefined> {
+        try {
+            const existing = await pgPool.query(
+                `SELECT id FROM lp_profiles WHERE user_id = $1`,
+                [user_id]
+            );
+
+            if (existing && existing.rowCount! > 0) {
+                return existing.rows[0];
+            }
+        }
+        catch(err) {
+            console.error("Create profile error:", err);
+            throw err;
+        }
+    }
+
     static async createProfileIfNotExists(user_id: string, email: string): Promise<UserProfile> {
         try {
+
             const result = await pgPool.query(
                 `INSERT INTO lp_profiles (user_id, username) VALUES ($1, $2) RETURNING * ON CONFLICT (user_id) DO NOTHING`,
                 [user_id, email]

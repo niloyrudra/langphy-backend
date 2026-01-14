@@ -66,6 +66,23 @@ export class SettingsModel {
         }
     }
 
+    static async settingsIfNotExists(user_id: string): Promise<UserSettings | undefined> {
+        try {
+            const existing = await pgPool.query(
+                `SELECT id FROM lp_settings WHERE user_id = $1`,
+                [user_id]
+            );
+
+            if (existing && existing.rowCount! > 0) {
+                return existing.rows[0];
+            }
+        }
+        catch(err) {
+            console.error("create user's settings error:", err);
+            throw err;
+        }
+    }
+
     static async createSettingsIfNotExists( user_id: string ): Promise<UserSettings> {
         try {
             const result = await pgPool.query(

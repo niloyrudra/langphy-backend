@@ -4,6 +4,7 @@ import { SettingsRouter } from "./routes/settings.js";
 import { errorHandler } from "./middlewares/error-handler.js";
 import pkg from "body-parser";
 import { dbRouter } from "./routes/db-route.js";
+import { startSettingsConsumers } from "./kafka/consumer.js";
 const {json} = pkg;
 // import cors from 'cors';
 
@@ -16,4 +17,14 @@ app.use( SettingsRouter );
 
 app.use( errorHandler );
 
-app.listen( 3005, () => console.log("Settings Service is running on port 3005") );
+const start = async () => {
+    try {
+        await startSettingsConsumers();
+    }
+    catch(err) {
+        console.error("Settings Kafka failed:", err);
+    }
+    app.listen( 3005, () => console.log("Settings Service is running on port 3005") );
+}
+
+start();

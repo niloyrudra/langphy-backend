@@ -30,14 +30,15 @@ export const publishOutboxEvents = async () => {
 
             await client.query(
                 `UPDATE outbox_events
-                SET published = true, published_at = NOW()
+                    SET published = true,
+                        published_at = NOW()
                 WHERE id = $1`,
                 [row.id]
             );
         } catch (err) {
             await client.query(
                 `UPDATE outbox_events
-                SET retry_count = retry_count + 1
+                    SET retry_count = retry_count + 1
                 WHERE id = $1`,
                 [row.id]
             );
