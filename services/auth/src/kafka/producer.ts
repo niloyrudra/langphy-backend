@@ -1,10 +1,11 @@
-import type { UserRegisteredEvent } from "@langphy/shared/events/user-registered/index.js";
+// import type { UserRegisteredEvent } from "@langphy/shared/events/user-registered/index.js";
+import { TOPICS, type BaseEvent, type UserDeletedEvent, type UserPasswordChangedEvent, type UserRegisteredEvent, type UserSignedOutEvent } from "@langphy/shared";
 import { kafka } from "./kafka.client.js";
-import { TOPICS } from "./topics.js";
-import type { BaseEvent } from "@langphy/shared/events/base-event.schema.js";
-import type { UserDeletedEvent } from "@langphy/shared/events/user-deleted/index.js";
-import type { UserSignedOutEvent } from "@langphy/shared/events/user-signed-out/index.js";
-import type { UserPasswordChangedEvent } from "@langphy/shared/events/user-password-changed/index.js";
+// import { TOPICS } from "@langphy/shared/events";
+// import type { BaseEvent } from "@langphy/shared/events";
+// import type { UserDeletedEvent } from "@langphy/shared/events/user-deleted/index.js";
+// import type { UserSignedOutEvent } from "@langphy/shared/events/user-signed-out/index.js";
+// import type { UserPasswordChangedEvent } from "@langphy/shared/events/user-password-changed/index.js";
 
 let producer: ReturnType<typeof kafka.producer> | null = null;
 
@@ -59,7 +60,7 @@ export const sendRaw = async (
  */
 export const publishEvent = async (event: BaseEvent): Promise<void> => {
   await sendRaw(
-    TOPICS.USERS_EVENTS,
+    TOPICS.USER_REGISTERED,
     event.user_id,
     event
   );
@@ -76,7 +77,7 @@ const send = async (event: {user_id: string}) => {
   }
 
   await producer.send({
-    topic: TOPICS.USERS_EVENTS,
+    topic: TOPICS.USER_REGISTERED,
     messages: [
       {
         key: event.user_id,

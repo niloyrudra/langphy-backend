@@ -1,5 +1,6 @@
-import { TOPICS } from "@langphy/shared/events/topics.js";
-import { UserRegisteredEventSchema } from "@langphy/shared/events";
+// import { TOPICS } from "@langphy/shared/events";
+// import { UserRegisteredEventSchema } from "@langphy/shared/events";
+import { TOPICS, UserRegisteredEventSchema } from "@langphy/shared";
 import { kafka } from "./kafka.client.js";
 
 const consumer = kafka.consumer( { groupId: process.env.SERVICE_NAME + '-group' } );

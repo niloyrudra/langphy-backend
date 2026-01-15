@@ -208,5 +208,6 @@ profiles:
           - infra/k8s/nlp/nlp-depl.yaml
           - infra/k8s/speech/speech-depl.yaml
           - infra/k8s/kafka/kafka-depl.yaml
+          - infra/k8s/kafka/kafka-topic-init.yaml
           - infra/k8s/kafka/zookeeper-depl.yaml
           - infra/k8s/ingress/ingress-srv.yaml

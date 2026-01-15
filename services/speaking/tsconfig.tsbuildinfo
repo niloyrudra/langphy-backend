@@ -1,1 +1,0 @@
-{"root":["./src/index.ts","./src/controllers/speaking.controller.ts","./src/db/index.ts","./src/models/speaking.model.ts","./src/routes/speaking.route.ts"],"version":"5.9.3"}

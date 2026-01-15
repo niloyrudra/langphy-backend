@@ -2,18 +2,75 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# copy shared ONCE
+# 1️⃣ Root workspace context (CRITICAL)
+COPY package.json package-lock.json ./
+
+# 2️⃣ Copy shared workspace
 COPY shared ./shared
 
-# copy service
+# 3️⃣ Install shared deps + build shared
+WORKDIR /app/shared
+RUN npm install
+RUN npm run build
+
+# 4️⃣ Copy service
+WORKDIR /app
 COPY services/auth ./services/auth
 
+# 5️⃣ Install service deps + build
 WORKDIR /app/services/auth
-
 RUN npm install
 RUN npm run build
 
 CMD ["node", "dist/index.js"]
+
+
+# FROM node:20-alpine
+
+# WORKDIR /app
+
+# # -------------------------
+# # 1️⃣ Build shared FIRST
+# # -------------------------
+# COPY shared ./shared
+# WORKDIR /app/shared
+
+# RUN npm install
+# RUN npm run build
+
+# # -------------------------
+# # 2️⃣ Build service
+# # -------------------------
+# WORKDIR /app
+
+# COPY services/auth ./services/auth
+# WORKDIR /app/services/auth
+
+# RUN npm install
+# RUN npm run build
+
+# CMD ["node", "dist/index.js"]
+
+# ***********************************************************
+
+# FROM node:20-alpine
+
+# WORKDIR /app
+
+# # copy shared ONCE
+# COPY shared ./shared
+
+# # copy service
+# COPY services/auth ./services/auth
+
+# WORKDIR /app/services/auth
+
+# RUN npm install
+# RUN npm run build
+
+# CMD ["node", "dist/index.js"]
+
+# ******************************************************
 
 # FROM node:alpine
 

@@ -1,1 +1,1 @@
-// export * from './events/user-registered.event.v1';
+export * from "./events/index.js";

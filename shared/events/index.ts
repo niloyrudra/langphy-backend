@@ -1,4 +1,5 @@
 export * from "./base-event.schema.js";
+export * from "./topics.js";
 
 export * from "./user-registered/index.js";
 export * from "./user-deleted/index.js";

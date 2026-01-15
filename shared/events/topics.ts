@@ -17,4 +17,4 @@ export const TOPICS = {
 
     ACHIEVEMENTS_UPDATED: "achievements.updated.v1",
     ACHIEVEMENTS_UPDATED_DLQ: "achievements.updated.dlq.v1",
-};
+} as const;

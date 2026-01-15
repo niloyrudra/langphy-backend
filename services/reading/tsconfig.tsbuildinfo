@@ -1,1 +1,0 @@
-{"root":["./src/index.ts","./src/controllers/reading.controller.ts","./src/db/index.ts","./src/models/reading.model.ts","./src/routes/reading.route.ts"],"version":"5.9.3"}

@@ -1,9 +1,10 @@
 import { v4 as uuid } from "uuid";
-import { PracticeCompletedEventSchema, UserRegisteredEventSchema } from "@langphy/shared/events";
+// import { PracticeCompletedEventSchema, UserRegisteredEventSchema } from "@langphy/shared/events";
 import { kafka } from "./kafka.client.js";
-import { TOPICS } from "@langphy/shared/events/topics.js";
-import { StreakModel } from "src/models/streaks.model.js";
-import { publishStreakEvent, publishStreakUpdated } from "./producer.js";
+// import { TOPICS } from "@langphy/shared/events";
+import { StreakModel } from "../models/streaks.model.js";
+import { publishStreakUpdated } from "./producer.js";
+import { PracticeCompletedEventSchema, TOPICS, UserRegisteredEventSchema } from "@langphy/shared";
 
 const consumer = kafka.consumer({
     groupId: process.env.SERVICE_NAME + '-group'
