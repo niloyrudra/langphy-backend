@@ -1,3 +1,0 @@
-declare const router: import("express-serve-static-core").Router;
-export { router as PerformanceRouter };
-//# sourceMappingURL=performance.route.d.ts.map
