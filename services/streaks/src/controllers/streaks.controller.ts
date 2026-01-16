@@ -33,6 +33,7 @@ export const createStreakController = async (req: Request, res: Response, next: 
         }
         const user_id = typeof userId == 'string' ? userId : '';
         const streak = await StreakModel.createStreak(user_id);
+        console.log("✅ Streak created for user:", user_id);
 
         res.status(201).json({
             message: "Streak created successfully",
@@ -59,7 +60,9 @@ export const updateStreakController = async (req: Request, res: Response, next: 
             return res.status(400).json({ message: "userId is required" });
         }
         const user_id = typeof userId == 'string' ? userId : '';
+
         const streak = await StreakModel.updateStreak(user_id);
+        console.log("✅ Streak updated for user:", user_id);
 
         res.status(200).json({
             message: "Streak updated successfully",

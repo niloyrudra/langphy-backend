@@ -1,12 +1,10 @@
 import { v4 as uuid } from "uuid";
-// import { PracticeCompletedEventSchema, UserRegisteredEventSchema } from "@langphy/shared/events";
 import { kafka } from "./kafka.client.js";
-// import { TOPICS } from "@langphy/shared/events";
 import { StreakModel } from "../models/streaks.model.js";
 import { publishStreakUpdated } from "./producer.js";
 import { PracticeCompletedEventSchema, TOPICS, UserRegisteredEventSchema } from "@langphy/shared";
 
-const consumer = kafka.consumer({
+export const consumer = kafka.consumer({
     groupId: process.env.SERVICE_NAME + '-group'
 });
 
@@ -20,17 +18,29 @@ export const initConsumer = async () => {
         eachMessage: async ( { topic, message } ) => {
             const data = JSON.parse( message.value!.toString() );
 
+            // console.log("Topic:", topic);
+
             switch( topic ) {
                 case TOPICS.USER_REGISTERED : {
-                    const event = UserRegisteredEventSchema.parse( data );
-                    await StreakModel.initIfNotExists( event.user_id );
+                    try {
+                        const event = UserRegisteredEventSchema.parse(data);
+
+                        console.log("💡 Attempting to create streak for", event.user_id);
+
+                        const streak = await StreakModel.createStreak(event.user_id);
+
+                        if (!streak) console.warn("⚠️ Streak returned null!");
+                        else console.log("✅ Streak created for user:", streak.user_id);
+                    } catch (err) {
+                        console.error("❌ USER_REGISTERED handler failed:", err);
+                    }
                     break;
                 }
 
                 case TOPICS.PRACTICE_COMPLETED : {
                     const event = PracticeCompletedEventSchema.parse( data );
                     const streak = await StreakModel.updateStreak( event.user_id );
-
+                    
                     const is_active = streak.current_streak > 0;
                     await publishStreakUpdated({
                         event_id: uuid(),

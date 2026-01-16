@@ -24,7 +24,8 @@ export const signupController = async ( req: Request, res: Response ) => {
             throw new BadRequestError( "Email in use!", 400 );
         }
 
-        const user = await UserModel.create( email, password );
+        const user = await UserModel.create( email, password, "email" );
+        console.log("✅ User created:", user.id);
 
         /** KAFKA */
         /**

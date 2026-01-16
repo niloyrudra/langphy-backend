@@ -86,7 +86,12 @@ export class SettingsModel {
     static async createSettingsIfNotExists( user_id: string ): Promise<UserSettings> {
         try {
             const result = await pgPool.query(
-                `INSERT INTO lp_settings (user_id, language, theme) VALUES ($1, 'en', 'light') RETURNING * ON CONFLICT (user_id) DO NOTHING`,
+                `
+                INSERT INTO lp_settings (user_id, language, theme)
+                VALUES ($1, 'en', 'light')
+                ON CONFLICT (user_id) DO NOTHING
+                RETURNING *
+                `,
                 [user_id]
             );
             return result.rows[0];

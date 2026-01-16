@@ -9,6 +9,7 @@ export interface User {
     username: string;
     first_name: string | null;
     last_name: string | null;
+    provider: string;
     created_at: Date;
     updated_at: Date | null;
 };
@@ -25,7 +26,7 @@ export interface UpdateUserProfileInput {
 export class UserModel {
     static async findByEmail( email: string ): Promise<User | null> {
         const result = await pgPool.query(
-            `SELECT id, username, email, password, created_at, updated_at, first_name, last_name FROM lp_users WHERE email = $1`,
+            `SELECT id, username, email, password, provider, created_at, updated_at, first_name, last_name FROM lp_users WHERE email = $1`,
             [email]
         );
 
@@ -34,17 +35,17 @@ export class UserModel {
         return result.rows[ 0 ];
     }
 
-    static async create( email: string, password: string ): Promise<User> {
+    static async create( email: string, password: string, provider: string ): Promise<User> {
         const hashedPassword = await Password.toHash(password);
         
         try {
             const result = await pgPool.query(
                 `
-                INSERT INTO lp_users (email, password)
-                VALUES ($1, $2)
-                RETURNING id, email, password, username, created_at
+                INSERT INTO lp_users (email, password, provider)
+                VALUES ($1, $2, $3)
+                RETURNING id, email, password, username, provider, created_at
                 `,
-                [email, hashedPassword]
+                [email, hashedPassword, provider]
             );
 
             return result.rows[ 0 ];
@@ -100,7 +101,7 @@ export class UserModel {
             SET password = $1,
                 updated_at = NOW()
             WHERE id = $2
-            RETURNING id, email, username, first_name, last_name, created_at, updated_at
+            RETURNING id, email, username, first_name, last_name, provider, created_at, updated_at
             `,
             [hashedPassword, userId]
         );

@@ -20,6 +20,7 @@ app.use( errorHandler );
 const start = async () => {
     try {
         await startSettingsConsumers();
+        console.log("Kafka Setting Consumer connected successfully!");
     }
     catch(err) {
         console.error("Settings Kafka failed:", err);

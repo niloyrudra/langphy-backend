@@ -22,39 +22,79 @@ export class StreakModel {
     }
 
     // Create streak row
-    static async createStreak(userId: string): Promise<UserStreak> {
+    static async createStreak(userId: string): Promise<UserStreak | null> {
         try {
-            const result = await pgPool.query(
-                `INSERT INTO lp_streaks (user_id)
-                 VALUES ($1)
-                 RETURNING *`,
+            const res = await pgPool.query(
+                `
+                INSERT INTO lp_streaks (
+                    user_id,
+                    current_streak,
+                    longest_streak,
+                    last_activity_date
+                )
+                VALUES ($1, 0, 0, NULL)
+                ON CONFLICT (user_id) DO NOTHING
+                RETURNING *
+                `,
                 [userId]
             );
-            return result.rows[0];
-        } catch (err: any) {
-            if (err.code === "23505") {
-                throw new Error("Streak already exists for this user");
+
+            console.log("💡 Insert result:", res.rows);
+
+            if (res.rows.length === 0) {
+                const existing = await pgPool.query(
+                    `SELECT * FROM lp_streaks WHERE user_id = $1`,
+                    [userId]
+                );
+                console.log("💡 Existing streak:", existing.rows);
+                return existing.rows[0];
             }
-            throw err;
+
+            return res.rows[0];
+        } catch (err) {
+            console.error("❌ createStreak failed:", err);
+            throw err;  // Re-throw so you can see it in consumer logs
         }
     }
 
-    // Create streak row
-    static async initIfNotExists(userId: string): Promise<UserStreak | undefined> {
-        const result = await pgPool.query(
-            `SELECT * FROM lp_streaks WHERE user_id = $1`,
-            [userId]
-        );
-        if( result.rows[0] ) return;
 
+    // static async createStreak(userId: string): Promise<UserStreak> {
+    //     try {
+    //         const result = await pgPool.query(
+    //             `
+    //             INSERT INTO lp_streaks (user_id, current_streak, longest_streak)
+    //             VALUES ($1, $2, $3)
+    //             ON CONFLICT (user_id) DO NOTHING
+    //             RETURNING *;
+    //             `,
+    //             [userId, 0, 0]
+    //         );
+
+    //         if (result.rows.length > 0) {
+    //             console.log("✅ Streak created for user:", userId);
+    //         } else {
+    //             console.log("ℹ️ Streak already exists for user:", userId);
+    //         }
+
+    //         return result.rows[0] ?? null;
+
+    //     } catch (err: any) {
+    //         if (err.code === "23505") {
+    //             throw new Error("Streak already exists for this user");
+    //         }
+    //         throw err;
+    //     }
+    // }
+
+    // Create streak row
+    static async getStreakIfExists(userId: string): Promise<UserStreak | undefined> {
         try {
             const result = await pgPool.query(
-                `INSERT INTO lp_streaks (user_id)
-                 VALUES ($1)
-                 RETURNING *`,
+                `SELECT * FROM lp_streaks WHERE user_id = $1`,
                 [userId]
             );
             return result.rows[0];
+            
         } catch (err: any) {
             if (err.code === "23505") {
                 throw new Error("Streak already exists for this user");

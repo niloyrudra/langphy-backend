@@ -40,7 +40,7 @@ const start = async () => {
 
   try {
     await initProducer();
-    console.log("Kafka Producer connected successfully!");
+    console.log("Kafka Auth Producer connected successfully!");
   } catch (err) {
     console.warn("Kafka Producer failed to connect, continuing without Kafka:", err);
   }

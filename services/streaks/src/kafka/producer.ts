@@ -1,9 +1,7 @@
 import { TOPICS, type StreakUpdatedEvent } from "@langphy/shared";
 import { kafka } from "./kafka.client.js";
-// import type { StreakUpdatedEvent } from "@langphy/shared/events/streak-updated/index.js";
-// import { TOPICS } from "@langphy/shared/events";
 
-const producer = kafka.producer();
+export const producer = kafka.producer();
 
 export const initProducer = async () => {
     await producer.connect();

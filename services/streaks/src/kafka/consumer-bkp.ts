@@ -1,5 +1,3 @@
-// import { TOPICS } from "@langphy/shared/events";
-// import { UserRegisteredEventSchema } from "@langphy/shared/events";
 import { TOPICS, UserRegisteredEventSchema } from "@langphy/shared";
 import { kafka } from "./kafka.client.js";
 

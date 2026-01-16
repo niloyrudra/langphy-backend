@@ -24,6 +24,7 @@ app.use( errorHandler );
 const start = async () => {
     try {
         await startProfileConsumers();
+        console.log("Kafka Profile Consumer connected successfully!");
     }
     catch(err) {
         console.error("Profile Kafka failed:", err);

@@ -96,7 +96,9 @@ export class ProfileModel {
     static async createProfile(userData: UserData): Promise<UserProfile> {
         try {
             const result = await pgPool.query(
-                "INSERT INTO lp_profiles (user_id, username, first_name, last_name, profile_image) VALUES ($1,$2,$3,$4,$5) RETURNING id,user_id,username,first_name,last_name,created_at",
+                `INSERT INTO lp_profiles (user_id, username, first_name, last_name, profile_image)
+                    VALUES ($1,$2,$3,$4,$5)
+                    RETURNING id,user_id,username,first_name,last_name,created_at`,
                 [
                     userData.user_id,
                     userData.username,
@@ -110,10 +112,10 @@ export class ProfileModel {
         }
         catch( err: any ) {
             console.error("Create profile error:", err);
-            // if (err?.code === "23505") {
+            if (err?.code === "23505") {
                 // unique_violation
-                // throw new Error("Create profile error", err);
-            // }
+                throw new Error("Create profile error", err);
+            }
             throw err;
         }
     }
@@ -137,9 +139,14 @@ export class ProfileModel {
 
     static async createProfileIfNotExists(user_id: string, email: string): Promise<UserProfile> {
         try {
-
             const result = await pgPool.query(
-                `INSERT INTO lp_profiles (user_id, username) VALUES ($1, $2) RETURNING * ON CONFLICT (user_id) DO NOTHING`,
+                `
+                INSERT INTO lp_profiles (user_id, username)
+                VALUES ($1, $2)
+                ON CONFLICT (user_id)
+                DO UPDATE SET username = EXCLUDED.username
+                RETURNING *
+                `,
                 [user_id, email]
             );
     
@@ -147,10 +154,10 @@ export class ProfileModel {
         }
         catch( err: any ) {
             console.error("Create profile error:", err);
-            // if (err?.code === "23505") {
+            if (err?.code === "23505") {
                 // unique_violation
-                // throw new Error("Create profile error", err);
-            // }
+                throw new Error("Create profile error", err);
+            }
             throw err;
         }
     }

@@ -22,11 +22,18 @@ export const startProfileConsumers = async () => {
             const event = UserRegisteredEventSchema.parse(
                 JSON.parse( message.value!.toString() )
             );
-
-            const exists = await ProfileModel.profileIfNotExists( event.user_id );
-            if( exists ) return;
-
-            await ProfileModel.createProfileIfNotExists( event.user_id, event.payload.email );
+            try {
+                const exists = await ProfileModel.profileIfNotExists( event.user_id );
+                if( exists ) return;
+    
+                await ProfileModel.createProfileIfNotExists( event.user_id, event.payload.email );
+                console.log("✅ Profile created for user:", event.user_id);
+            }
+            catch(err) {
+                console.error("Profile creation failed:", err);
+                console.error("ℹ️ Profile already exists for user:", event.user_id);
+                // throw err;
+            }
         },
     });
 

@@ -1,11 +1,5 @@
-// import type { UserRegisteredEvent } from "@langphy/shared/events/user-registered/index.js";
 import { TOPICS, type BaseEvent, type UserDeletedEvent, type UserPasswordChangedEvent, type UserRegisteredEvent, type UserSignedOutEvent } from "@langphy/shared";
 import { kafka } from "./kafka.client.js";
-// import { TOPICS } from "@langphy/shared/events";
-// import type { BaseEvent } from "@langphy/shared/events";
-// import type { UserDeletedEvent } from "@langphy/shared/events/user-deleted/index.js";
-// import type { UserSignedOutEvent } from "@langphy/shared/events/user-signed-out/index.js";
-// import type { UserPasswordChangedEvent } from "@langphy/shared/events/user-password-changed/index.js";
 
 let producer: ReturnType<typeof kafka.producer> | null = null;
 

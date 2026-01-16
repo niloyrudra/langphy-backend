@@ -22,10 +22,18 @@ export const startSettingsConsumers = async () => {
                 JSON.parse( message.value!.toString() )
             );
 
-            const exists = await SettingsModel.settingsIfNotExists( event.user_id );
-            if( exists ) return;
-
-            await SettingsModel.createSettingsIfNotExists( event.user_id );
+            try {
+                const exists = await SettingsModel.settingsIfNotExists( event.user_id );
+                if( exists ) return;
+    
+                await SettingsModel.createSettingsIfNotExists( event.user_id );
+                console.log("✅ Settings created for user:", event.user_id);
+            }
+            catch(err) {
+                console.error("Settings creation failed:", err);
+                console.log("✅ settings creation failed for user:", event.user_id);
+                // throw err;
+            }
         },
     });
 }

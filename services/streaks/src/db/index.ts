@@ -10,3 +10,15 @@ export const pgPool = new Pool({
 });
 
 pgPool.on( 'connect', () => console.log( "✅ Connect to Streaks PostgreSQl" ));
+
+// export async function connectDB() {
+//     // Force at least one connection at startup
+//     await pgPool.query("select 1");
+//     console.log("✅ Connected to Streaks PostgreSQL");
+// }
+
+// export async function disconnectDB() {
+//     console.log("🛑 Closing PostgreSQL pool");
+//     await pgPool.end();
+//     console.log("✅ PostgreSQL pool closed");
+// }
