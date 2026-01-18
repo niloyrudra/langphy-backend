@@ -1,5 +1,4 @@
 import type { NextFunction, Request, Response } from "express";
-
 import { ProfileModel } from "../models/profile.model.js";
 import { validationResult } from "express-validator";
 import { BadRequestError } from "../errors/bad-request-errors.js";
@@ -22,7 +21,7 @@ export const getProfileController = async ( req: Request, res: Response, next: N
                 message: "Profile fetched successfully!",
                 profile: {
                     id: profile.id,
-                    user_id,
+                    user_id: profile.user_id,
                     username: profile.username,
                     first_name: profile.first_name,
                     last_name: profile.last_name,
@@ -57,7 +56,7 @@ export const updateProfileController = async ( req: Request, res: Response, next
                 message: "Profile updated successfully!",
                 profile: {
                     id: profile.id,
-                    user_id: profile?.user_id,
+                    user_id: profile.user_id,
                     username: profile.username,
                     first_name: profile.first_name,
                     last_name: profile.last_name,

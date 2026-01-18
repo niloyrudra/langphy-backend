@@ -1,23 +1,21 @@
 import type { Request, Response } from "express";
-import  bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
 import { UserModel } from "../models/user.model.js";
 import { DatabaseConnectionErrors } from "../errors/database-connection-errors.js";
-// import { validationResult } from "express-validator";
-// import { RequestValidationError } from "../errors/request-validation-errors.js";
 import { Password } from "../services/password.js";
 import { BadRequestError } from "../errors/bad-request-errors.js";
-import { CustomError } from "../errors/custom-errors.js";
+import { validationResult } from "express-validator";
+import { RequestValidationError } from "../errors/request-validation-errors.js";
 
 export const signinController = async ( req: Request, res: Response ) => {
+    const errors = validationResult(req);
+    if( !errors.isEmpty() ) throw new RequestValidationError( errors.array() );
+    
     const { email, password } = req.body;
-    // const errors = validationResult(req);
 
     try {
         const user = await UserModel.findByEmail( email );
 
-        // if( !user ) throw new RequestValidationError( errors.array() );
         if (!user) {
             return res.status(401).send({ error: "Invalid credentials" });
         }
@@ -26,7 +24,7 @@ export const signinController = async ( req: Request, res: Response ) => {
 
         // if( !passwordMatch ) return res.status(401).send({ error: "Invalid credentials" });
         if( !passwordMatch ) {
-            throw new BadRequestError( "Invalid credentials", 401);
+            throw new BadRequestError( "Invalid credentials");
         }
 
         const userJwt = jwt.sign(

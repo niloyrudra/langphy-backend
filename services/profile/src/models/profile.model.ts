@@ -75,7 +75,7 @@ export class ProfileModel {
             );
 
             if (!result.rows[0]) {
-                throw new Error("Profile not found");
+                throw new BadRequestError("Profile not found");
             }
         
             return result.rows[0];
@@ -85,10 +85,10 @@ export class ProfileModel {
 
             // Handle unique username violation gracefully
             if (err.code === "23505") {
-                throw new Error("Username already exists. Choose another username.");
+                throw new BadRequestError("Username already exists. Choose another username.");
             }
 
-            throw err;
+            throw new BadRequestError("Something went wrong!");
         }
     }
 

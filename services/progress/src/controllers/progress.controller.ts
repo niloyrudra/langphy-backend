@@ -12,9 +12,7 @@ export const upsertProgressController = async (
     next: NextFunction
 ) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        throw new RequestValidationError(errors.array());
-    }
+    if (!errors.isEmpty()) throw new RequestValidationError(errors.array());
 
     try {
         const {
@@ -96,7 +94,7 @@ export const getUserProgressController = async (
         const progress = await ProgressModel.getUserProgress(user_id);
 
         res.status(200).send({
-            user_id: userId,
+            message: "Progress data",
             progress,
         });
     } catch (err) {

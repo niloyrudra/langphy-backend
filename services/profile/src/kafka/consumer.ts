@@ -1,7 +1,4 @@
-// import { UserRegisteredEventSchema } from "@langphy/shared/events";
 import { kafka } from "./kafka.client.js";
-// import { TOPICS } from "@langphy/shared/events";
-// import { ProfileModel } from "src/models/profile.model.js";
 import { ProfileModel } from "../models/profile.model.js";
 import { TOPICS, UserRegisteredEventSchema } from "@langphy/shared";
 
