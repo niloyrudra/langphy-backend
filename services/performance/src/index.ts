@@ -4,6 +4,7 @@ import { PerformanceRouter } from "./routes/performance.route.js";
 import { errorHandler } from "./middlewares/error-handler.js";
 import pkg from "body-parser";
 import { dbRouter } from "./routes/db-route.js";
+import { startKafka } from "./kafka/index.js";
 const {json} = pkg;
 // import cors from 'cors';
 
@@ -16,4 +17,13 @@ app.use( PerformanceRouter );
 
 app.use( errorHandler );
 
-app.listen( 3003, () => console.log("Performance Service is running on port 3003") );
+const start = async () => {
+    try {
+        await startKafka();
+    }
+    catch(err) {
+        console.error("Performance - Kafka failed to initiate.");
+    }
+    app.listen( 3003, () => console.log("Performance Service is running on port 3003") );
+}
+start();

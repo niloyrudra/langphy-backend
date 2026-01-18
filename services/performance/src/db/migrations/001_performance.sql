@@ -1,13 +1,26 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-CREATE TABLE lp_performance (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL UNIQUE,
-    total_quizzes INTEGER DEFAULT 0,
-    avg_score NUMERIC(5,2) DEFAULT 0,
-    best_score INTEGER DEFAULT 0,
-    last_quiz_score INTEGER,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+CREATE TABLE IF NOT EXISTS lp_performance (
+    user_id UUID PRIMARY KEY,
+
+    total_lessons_completed INT NOT NULL DEFAULT 0,
+    total_sessions_completed INT NOT NULL DEFAULT 0,
+
+    practice_completed INT NOT NULL DEFAULT 0,
+    quiz_completed INT NOT NULL DEFAULT 0,
+    reading_completed INT NOT NULL DEFAULT 0,
+    writing_completed INT NOT NULL DEFAULT 0,
+    speaking_completed INT NOT NULL DEFAULT 0,
+    listening_completed INT NOT NULL DEFAULT 0,
+
+    avg_quiz_score FLOAT,
+    avg_speaking_score FLOAT,
+
+    quiz_score_count INT NOT NULL DEFAULT 0,
+    speaking_score_count INT NOT NULL DEFAULT 0,
+
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
 CREATE OR REPLACE FUNCTION set_updated_at()

@@ -8,9 +8,12 @@ export const TOPICS = {
     STREAK_UPDATED_DLQ: "streaks.updated.dlq.v1",
 
     PRACTICE_COMPLETED: "practice.completed.v1",
-
+    
+    // Progress service related
     PROGRESS_UPDATED: "progress.updated.v1",
     PROGRESS_UPDATED_DLQ: "progress.updated.dlq.v1",
+    LESSON_COMPLETED: "lesson.completed.v1",
+    SESSION_COMPLETED: "session.completed.v1",
 
     PERFORMANCE_UPDATED: "performance.updated.v1",
     PERFORMANCE_UPDATED_DLQ: "performance.updated.dlq.v1",

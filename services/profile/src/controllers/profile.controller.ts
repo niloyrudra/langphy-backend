@@ -12,17 +12,17 @@ export const getProfileController = async ( req: Request, res: Response, next: N
     if( ! errors.isEmpty() ) throw new RequestValidationError( errors.array() );
 
     try {
-        const { userId } = req.params;
-        if(!userId) throw new BadRequestError("No user id is provides.");
-        const user_id = typeof userId == 'string' ? userId : '';
-        const profile = await ProfileModel.getProfile( user_id );
+        const { user_id } = req.params;
+        if(!user_id) throw new BadRequestError("No user id is provides.");
+        const _user_id = typeof user_id == 'string' ? user_id : '';
+        const profile = await ProfileModel.getProfile( _user_id );
 
         if( profile ) {
             res.status(200).send({
                 message: "Profile fetched successfully!",
                 profile: {
                     id: profile.id,
-                    user_id: userId,
+                    user_id,
                     username: profile.username,
                     first_name: profile.first_name,
                     last_name: profile.last_name,

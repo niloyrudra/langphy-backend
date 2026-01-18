@@ -13,3 +13,8 @@ CREATE TABLE outbox_events (
 CREATE INDEX idx_outbox_unpublished
 ON outbox_events (published)
 WHERE published = false;
+
+CREATE TABLE processed_events (
+  event_id UUID PRIMARY KEY,
+  processed_at TIMESTAMP NOT NULL
+);

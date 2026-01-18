@@ -82,7 +82,7 @@ const send = async (event: {user_id: string}) => {
 };
 
 /* =====================
-   EVENT PUBLISHERS
+    EVENT PUBLISHERS
 ===================== */
 
 export const publishUserRegistered = async ( event: UserRegisteredEvent ) => send(event);

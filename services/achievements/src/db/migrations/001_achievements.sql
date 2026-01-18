@@ -17,8 +17,18 @@ CREATE TABLE lp_user_achievements (
     UNIQUE (user_id, achievement_id),
 
     FOREIGN KEY (achievement_id) REFERENCES lp_achievements(id),
-    FOREIGN KEY (user_id) REFERENCES lp_profiles(id) ON DELETE CASCADE
 );
+-- CREATE TABLE lp_user_achievements (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     user_id UUID NOT NULL,
+--     achievement_id UUID NOT NULL,
+--     achieved_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+
+--     UNIQUE (user_id, achievement_id),
+
+--     FOREIGN KEY (achievement_id) REFERENCES lp_achievements(id),
+--     FOREIGN KEY (user_id) REFERENCES lp_profiles(id) ON DELETE CASCADE
+-- );
 
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER AS $$

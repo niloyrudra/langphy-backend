@@ -4,6 +4,7 @@ import { ProgressRouter } from "./routes/progress.route.js";
 import { errorHandler } from "./middlewares/error-handler.js";
 import pkg from "body-parser";
 import { dbRouter } from "./routes/db-route.js";
+import { initProducer } from "./kafka/producer.js";
 const {json} = pkg;
 // import cors from 'cors';
 
@@ -16,4 +17,14 @@ app.use( ProgressRouter );
 
 app.use( errorHandler );
 
-app.listen( 3002, () => console.log("Progress Service is running on port 3002") );
+const start = async () => {
+
+    try{
+        await initProducer();
+    }
+    catch(err) {
+        console.log( "PRogress - Kafka producer failed:", err );
+    }
+    app.listen( 3002, () => console.log("Progress Service is running on port 3002") );
+}
+start();

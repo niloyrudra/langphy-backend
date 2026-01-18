@@ -9,3 +9,4 @@ export * from "./user-password-changed/index.js";
 export * from "./practice-completed/index.js";
 
 export * from "./streak-updated/index.js";
+export * from "./progress/index.js";

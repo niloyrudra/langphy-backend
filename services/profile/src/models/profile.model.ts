@@ -22,11 +22,11 @@ export interface UserData {
 
 export class ProfileModel {
 
-    static async getProfile(id: string): Promise<UserProfile> {
+    static async getProfile(user_id: string): Promise<UserProfile> {
         try {
             const result = await pgPool.query(
-                `SELECT id, user_id, username, first_name, last_name, profile_image, created_at FROM lp_profiles WHERE id = $1`,
-                [id]
+                `SELECT * FROM lp_profiles WHERE user_id = $1`,
+                [user_id]
             );
     
             return result.rows[0];
@@ -62,7 +62,7 @@ export class ProfileModel {
                     last_name = $3,
                     profile_image = $4,
                     updated_at = now()
-                WHERE id = $5
+                WHERE user_id = $5
                 RETURNING id, user_id, username, first_name, last_name, profile_image, created_at, updated_at
                 `,
                 [
