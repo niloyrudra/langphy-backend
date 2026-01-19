@@ -63,7 +63,7 @@ export class ProfileModel {
                     profile_image = $4,
                     updated_at = now()
                 WHERE user_id = $5
-                RETURNING id, user_id, username, first_name, last_name, profile_image, created_at, updated_at
+                RETURNING *
                 `,
                 [
                     userData.username,
@@ -98,7 +98,7 @@ export class ProfileModel {
             const result = await pgPool.query(
                 `INSERT INTO lp_profiles (user_id, username, first_name, last_name, profile_image)
                     VALUES ($1,$2,$3,$4,$5)
-                    RETURNING id,user_id,username,first_name,last_name,created_at`,
+                    RETURNING *`,
                 [
                     userData.user_id,
                     userData.username,
@@ -123,7 +123,7 @@ export class ProfileModel {
     static async profileIfNotExists(user_id: string): Promise<UserProfile | undefined> {
         try {
             const existing = await pgPool.query(
-                `SELECT id FROM lp_profiles WHERE user_id = $1`,
+                `SELECT user_id FROM lp_profiles WHERE user_id = $1`,
                 [user_id]
             );
 

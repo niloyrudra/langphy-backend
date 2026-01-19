@@ -16,8 +16,8 @@ export const signinController = async ( req: Request, res: Response ) => {
     try {
         const user = await UserModel.findByEmail( email );
 
-        if (!user) {
-            return res.status(401).send({ error: "Invalid credentials" });
+        if (!user || !user.password) {
+            throw new BadRequestError("Invalid credentials");
         }
 
         const passwordMatch = await Password.compare( user.password, password );
@@ -30,7 +30,8 @@ export const signinController = async ( req: Request, res: Response ) => {
         const userJwt = jwt.sign(
             {
                 id: user.id,
-                email: user.email
+                email: user.email,
+                created_at: user.created_at
             },
             process.env.JWT_KEY!
         );

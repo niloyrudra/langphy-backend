@@ -3,14 +3,22 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE IF NOT EXISTS lp_profiles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL UNIQUE,
-    username TEXT,
+
+    username TEXT UNIQUE,
     first_name TEXT,
     last_name TEXT,
     profile_image TEXT,
+
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    CONSTRAINT lp_users_username_unique UNIQUE (username),
-    CONSTRAINT lp_users_username_not_empty CHECK (length(username) > 0)
+
+    -- CONSTRAINT fk_profiles_user
+    --     FOREIGN KEY (user_id)
+    --     REFERENCES lp_users(id)
+    --     ON DELETE CASCADE,
+
+    CONSTRAINT lp_profiles_username_not_empty
+        CHECK (username IS NULL OR length(username) > 0)
 );
 
 CREATE OR REPLACE FUNCTION set_updated_at()

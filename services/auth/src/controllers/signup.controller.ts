@@ -57,7 +57,8 @@ export const signupController = async ( req: Request, res: Response ) => {
                 id: user.id,
                 email: user.email,
                 created_at: user.created_at,
-                username: user.username
+                provider: user.provider
+                // username: user.username
                 // updated_at: user.updated_at
             }
         });

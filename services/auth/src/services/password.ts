@@ -7,6 +7,9 @@ export class Password {
     }
 
     static async compare( storedPasword: string, suppliedPassword: string ) {
+        if (!suppliedPassword || !storedPasword) {
+            throw new Error("Password or hash missing");
+        }
         const passwordMatch = await bcrypt.compare( suppliedPassword, storedPasword );
         return passwordMatch;
     }
