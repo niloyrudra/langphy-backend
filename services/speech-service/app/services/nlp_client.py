@@ -1,30 +1,66 @@
 import os
 import httpx
 
-# NLP_SERVICE_URL = "http://nlp-service:8000"
 NLP_SERVICE_URL = os.getenv(
     "NLP_SERVICE_URL",
     "http://nlp-srv:8000"
 )
 
+# default analysis fallback if NLP fails
+DEFAULT_ANALYSIS = {
+    "pronunciation": None,
+    "fluency": None,
+    "accuracy": None,
+    "errors": []
+}
+
 async def evaluate_text(expected: str, spoken: str):
-    # timeout = httpx.Timeout(10.0, connect=5.0, read=10.0, write=30.0)
-    timeout = httpx.Timeout(10.0, connect=5.0)
-    async with httpx.AsyncClient( timeout=timeout ) as client:
-        response = await client.post(
-            f"{NLP_SERVICE_URL}/api/nlp/analyze/evaluate-speaking",
-            json={
-                "expected_text": expected,
-                "spoken_text": spoken
-            },
-            timeout=10
-        )
-        
+    expected_clean = expected.strip()
+    spoken_clean = spoken.strip()
+    timeout = httpx.Timeout(10.0, connect=5.0, read=10.0, write=30.0)
+    async with httpx.AsyncClient(timeout=timeout) as client:
         try:
+            response = await client.post(
+                f"{NLP_SERVICE_URL}/api/nlp/analyze/evaluate-speaking",
+                json={
+                    "expected_text": expected_clean,   # ⚠️ correct field name
+                    "spoken_text": spoken_clean        # ⚠️ correct field name
+                },
+                timeout=30
+            )
             response.raise_for_status()
+            data = response.json()
+            
+            # return analysis if exists, else fallback
+            # return data.get("analysis") or DEFAULT_ANALYSIS
+            return data
+
         except httpx.HTTPStatusError as e:
+            # NLP returned 4xx/5xx
             return {
-                "error": "NLP service failed",
-                "detail": str(e),
-                "status_code": e.response.status_code
+                **DEFAULT_ANALYSIS,
+                "errors": [f"NLP service HTTP error {e.response.status_code}"]
             }
+
+        except httpx.RequestError as e:
+            # network / connection errors
+            return {
+                **DEFAULT_ANALYSIS,
+                "errors": [f"NLP service request failed: {str(e)}"]
+            }
+
+        except Exception as e:
+            # fallback safe object
+            return {
+                "spoken_text": spoken_clean,
+                "similarity": None,
+                "pronunciation_score": None,
+                "feedback": "",
+                "issues": [],
+                "error": str(e)
+            }
+            # any other unexpected errors
+            # return {
+            #     **DEFAULT_ANALYSIS,
+            #     "errors": [f"Unexpected error in NLP evaluation: {str(e)}"]
+            # }

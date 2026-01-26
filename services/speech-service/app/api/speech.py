@@ -1,5 +1,6 @@
 import uuid
 import os
+import unicodedata
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from app.services.whisper_service import whisper_service
 from app.services.nlp_client import evaluate_text
@@ -7,6 +8,10 @@ from app.services.audio_utils import normalize_audio
 from app.services.scoring import word_confidence
 
 router = APIRouter()
+
+def normalize_text(s: str) -> str:
+    """Trim and normalize text for NLP evaluation"""
+    return unicodedata.normalize("NFC", s.strip())
 
 @router.post("/api/speech/evaluate")
 async def evaluate_speech(
@@ -38,13 +43,17 @@ async def evaluate_speech(
                 "error": "No speech detected",
                 "transcription": "",
                 "segments": [],
+                "words": [],
                 "analysis": None
             }
 
         # 4️⃣ NLP evaluation
+        expected_text_clean = expected_text.strip()
+        spoken_clean = text.strip()
+        expected_clean = normalize_text(expected_text_clean)
         nlp_result = await evaluate_text(
-            expected=expected_text,
-            spoken=text
+            expected=expected_clean,
+            spoken=spoken_clean
         )
 
         # 5️⃣ Flatten all segments' words
@@ -52,7 +61,7 @@ async def evaluate_speech(
         for segment in transcription["segments"]:
             for w in segment.get("words", []):  # word timestamps from Whisper
                 words_with_conf.append({
-                    "text": w["word"],
+                    "text": w["word"].strip(),
                     "confidence": word_confidence(w.get("probability", 0))  # use logprob or probability
                 })
 
@@ -68,7 +77,11 @@ async def evaluate_speech(
         # 🔒 NEVER crash Expo
         return {
             "error": "Speech evaluation failed",
-            "detail": str(e)
+            "detail": str(e),
+            "transcription": transcription.get("text", ""),
+            "segments": segments if 'segments' in locals() else [],
+            "words": words_with_conf if 'words_with_conf' in locals() else [],
+            "analysis": {}
         }
 
     finally:
@@ -77,44 +90,3 @@ async def evaluate_speech(
             os.remove(tmp_path)
         if wav_path and os.path.exists(wav_path):
             os.remove(wav_path)
-
-# import uuid
-# import os
-# from fastapi import APIRouter, UploadFile, File, Form, HTTPException
-# from app.services.whisper_service import whisper_service
-# from app.services.nlp_client import evaluate_text
-# from app.services.audio_utils import normalize_audio
-
-# router = APIRouter()
-
-# @router.post("/api/speech/evaluate")
-# async def evaluate_speech(
-#     audio: UploadFile = File(...),
-#     expected_text: str = Form(...)
-# ):
-#     tmp_path = f"/tmp/{uuid.uuid4()}.m4a" # wav
-
-#     with open(tmp_path, "wb") as f:
-#         f.write(await audio.read())
-
-#     # after saving tmp_path
-#     wav_path = normalize_audio(tmp_path)
-
-#     # 1️⃣ Transcribe
-#     transcription = whisper_service.transcribe(wav_path)
-
-#     os.remove(tmp_path)
-#     os.remove(wav_path)
-
-#     # 2️⃣ NLP evaluation
-#     nlp_result = await evaluate_text(
-#         expected=expected_text,
-#         spoken=transcription["text"]
-#     )
-
-#     # 3️⃣ Combine response
-#     return {
-#         "transcription": transcription["text"],
-#         "segments": transcription["segments"],
-#         "analysis": nlp_result
-#     }

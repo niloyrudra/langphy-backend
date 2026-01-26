@@ -57,7 +57,6 @@ export class UserModel {
                 `
                 UPDATE lp_users
                 SET password = $1
-                    updated_at = now()
                 WHERE email = $2
                 RETURNING id, email, provider, created_at
                 `,

@@ -24,25 +24,47 @@ spec:
 
           resources:
             requests:
-              cpu: "250m"
-              memory: "512Mi"
+              cpu: "1000m" # "250m"
+              memory: "1Gi" # "512Mi"
             limits:
-              cpu: "1000m"
-              memory: "2Gi"
+              cpu: "4000m" # "1000m"
+              memory: "4Gi" # "2Gi"
+
+          # readinessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: 8001
+          #   initialDelaySeconds: 90
+          #   periodSeconds: 15
+          #   timeoutSeconds: 5
+          #   failureThreshold: 5
+
+          # livenessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: 8001
+          #   initialDelaySeconds: 180
+          #   periodSeconds: 20
+          #   timeoutSeconds: 5
+          #   failureThreshold: 3
 
           readinessProbe:
             httpGet:
               path: /docs
               port: 8001
-            initialDelaySeconds: 60 # model may take time to load
-            periodSeconds: 10
+            initialDelaySeconds: 180 # model may take time to load
+            timeoutSeconds: 5
+            periodSeconds: 30
+            failureThreshold: 5
 
           livenessProbe:
             httpGet:
               path: /docs
               port: 8001
-            initialDelaySeconds: 120
-            periodSeconds: 20
+            initialDelaySeconds: 300   # Give pod 5min before first probe
+            timeoutSeconds: 5          # Allow long processing
+            periodSeconds: 60          # Check only every 60s
+            failureThreshold: 5        # Require multiple failures to restart
 ---
 apiVersion: v1
 kind: Service
