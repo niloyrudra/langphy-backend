@@ -11,6 +11,8 @@ const router = Router();
 router.post(
     "/api/progress",
     [
+        body("category_id").notEmpty(),
+        body("unit_id").notEmpty(),
         body("user_id").notEmpty(),
         body("content_type").notEmpty(),
         body("content_id").notEmpty(),

@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-CREATE TABLE lp_streaks (
+CREATE TABLE IF NOT EXISTS lp_streaks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL UNIQUE,
     current_streak INTEGER NOT NULL DEFAULT 0,

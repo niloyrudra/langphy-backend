@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-CREATE TABLE lp_settings (
+CREATE TABLE IF NOT EXISTS lp_settings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL UNIQUE,
     theme TEXT DEFAULT 'light',

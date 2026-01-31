@@ -12,7 +12,11 @@ const app = express();
 app.use( json() );
 
 app.use( unitRouter );
-app.all( "*", async ( req, res ) => { throw new Error("404!") } );
+
+// app.all( "*", async ( req, res ) => { throw new Error("404!") } );
+app.all("*", (req, res) => {
+  res.status(404).json({ error: "Not Found" });
+});
 
 connectMongo();
 

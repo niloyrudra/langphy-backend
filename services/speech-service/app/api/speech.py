@@ -1,7 +1,7 @@
 import uuid
 import os
 import unicodedata
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, BackgroundTasks
 from app.services.whisper_service import whisper_service
 from app.services.nlp_client import evaluate_text
 from app.services.audio_utils import normalize_audio
@@ -15,9 +15,13 @@ def normalize_text(s: str) -> str:
 
 @router.post("/api/speech/evaluate")
 async def evaluate_speech(
+    # background_tasks: BackgroundTasks,
     audio: UploadFile = File(...),
     expected_text: str = Form(...)
 ):
+    
+    job_id = str(uuid.uuid4())
+
     if not audio.content_type.startswith("audio/"):
         raise HTTPException(status_code=400, detail="Invalid audio file")
 
@@ -90,3 +94,14 @@ async def evaluate_speech(
             os.remove(tmp_path)
         if wav_path and os.path.exists(wav_path):
             os.remove(wav_path)
+
+
+# @router.get("/api/speech/result/{job_id}")
+# async def get_result(job_id: str):
+#     if job_id not in JOB_RESULTS:
+#         return {"status": "processing"}
+
+#     return {
+#         "status": "done",
+#         "data": JOB_RESULTS[job_id]
+#     }

@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-CREATE TABLE lp_progress (
+CREATE TABLE IF NOT EXISTS lp_progress (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     category_id UUID NOT NULL,
     unit_id UUID NOT NULL,
