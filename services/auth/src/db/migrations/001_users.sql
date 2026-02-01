@@ -13,8 +13,6 @@ CREATE TABLE IF NOT EXISTS lp_users (
     CONSTRAINT lp_users_email_not_empty CHECK (length(email) > 0)
 );
 
-
-
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
