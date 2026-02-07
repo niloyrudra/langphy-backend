@@ -12,6 +12,14 @@ spec:
       labels:
         app: achievements
     spec:
+      initContainers:
+        - name: db-migrate
+          image: niloyrudra/achievements
+          command: [ "node", "dist/db/migrate.js" ]
+          envFrom:
+            - secretRef:
+                name: achievements-secrets
+
       containers:
         - name: achievements
           image: niloyrudra/achievements

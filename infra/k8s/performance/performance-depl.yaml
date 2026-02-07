@@ -12,6 +12,14 @@ spec:
       labels:
         app: performance
     spec:
+      initContainers:
+        - name: db-migrate
+          image: niloyrudra/performance
+          command: [ "node", "dist/db/migrate.js" ]
+          envFrom:
+            - secretRef:
+                name: performance-secrets
+
       containers:
         - name: performance
           image: niloyrudra/performance

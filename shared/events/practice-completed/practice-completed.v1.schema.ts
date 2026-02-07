@@ -5,8 +5,9 @@ export const PracticeCompletedEventSchema = BaseEventSchema.extend({
   event_type: z.literal("practice.completed"),
   event_version: z.literal(1),
   payload: z.object({
-    lesson_id: z.uuid(),
-    completed_at: z.date()
+    session_key: z.string(),
+    total_duration_ms: z.number().int(),
+    avg_score: z.number().optional(),
   }),
 });
 

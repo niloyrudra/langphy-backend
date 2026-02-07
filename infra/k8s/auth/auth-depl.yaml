@@ -11,6 +11,14 @@ spec:
       labels:
         app: auth
     spec:
+      initContainers:
+        - name: db-migrate
+          image: niloyrudra/auth
+          command: [ "node", "dist/db/migrate.js" ]
+          envFrom:
+            - secretRef:
+                name: auth-secrets
+
       containers:
         - name: auth
           image: niloyrudra/auth

@@ -15,9 +15,13 @@ CREATE TABLE IF NOT EXISTS lp_performance (
 
     avg_quiz_score FLOAT,
     avg_speaking_score FLOAT,
+    avg_listening_score FLOAT,
+    avg_writing_score FLOAT,
 
     quiz_score_count INT NOT NULL DEFAULT 0,
     speaking_score_count INT NOT NULL DEFAULT 0,
+    listening_score_count INT NOT NULL DEFAULT 0,
+    writing_score_count INT NOT NULL DEFAULT 0,
 
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()

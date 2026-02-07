@@ -6,7 +6,6 @@ import { signInRouter } from "./routes/signin.js";
 import { signOutRouter } from "./routes/signout.js";
 import { signUpRouter } from "./routes/signup.js";
 const { json } = pkg;
-import { runMigrations } from "./db/migrate.js";
 import { errorHandler } from "./middlewares/error-handler.js";
 // import { NotFoundError } from "./errors/no-find-errors.js";
 import { dbRouter } from "./routes/db-route.js";
@@ -31,12 +30,12 @@ app.use( errorHandler );
 const start = async () => {
   const PORT = 3000;
 
-  try {
-    await runMigrations();
-  }
-  catch(err) {
-    console.error("Migrations failed during the process.", err);
-  }
+  // try {
+  //   await runMigrations();
+  // }
+  // catch(err) {
+  //   console.error("Migrations failed during the process.", err);
+  // }
 
   try {
     await initProducer();

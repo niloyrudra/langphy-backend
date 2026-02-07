@@ -5,8 +5,14 @@
     "shared"
   ],
   "scripts": {
-    "build": "npm run build -w shared && npm run build -w services/auth",
+    "build": "npm run build -w shared && npm run build -w services/auth && npm run build -w services/achievements && npm run build -w services/profile && npm run build -w services/performance && npm run build -w services/progress && npm run build -w services/settings && npm run build -w services/streaks && npm run build -w services/gateway-service",
     "dev": "npm run dev -w services/auth",
     "clean": "rm -rf node_modules services/**/node_modules shared/node_modules"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1"
+  },
+  "dependencies": {
+    "cpx": "^1.5.0"
   }
 }

@@ -22,6 +22,12 @@ WORKDIR /app/services/achievements
 RUN npm install
 RUN npm run build
 
+# # Ensure directory exists
+# RUN mkdir -p dist/db/migrations
+
+# # Copy SQL files into runtime location
+# COPY services/achievements/src/db/migrations ./dist/db/migrations
+
 CMD ["node", "dist/index.js"]
 
 

@@ -7,6 +7,10 @@ CREATE TABLE IF NOT EXISTS lp_progress (
     user_id UUID NOT NULL,
     content_type TEXT NOT NULL, -- quiz | lesson | practice
     content_id UUID NOT NULL,
+    
+    session_key: TEXT NOT NULL,
+    lesson_order: INTEGER NOT NULL DEFAULT 0,
+
     completed BOOLEAN DEFAULT false,
     progress_percent INTEGER DEFAULT 0,
     score INTEGER DEFAULT 0,

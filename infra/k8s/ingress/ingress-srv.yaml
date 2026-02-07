@@ -4,6 +4,8 @@ metadata:
   name: ingress-srv
   annotations:
     nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/limit-rps: "10"
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: "3"
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
@@ -15,6 +17,14 @@ spec:
   rules:
     - http:
         paths:
+          - path: /api/events/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: gateway-srv
+                port:
+                  number: 3009
+
           - path: /api/users/?(.*)
             pathType: ImplementationSpecific
             backend:

@@ -12,6 +12,14 @@ spec:
       labels:
         app: streaks
     spec:
+      initContainers:
+        - name: db-migrate
+          image: niloyrudra/streaks
+          command: [ "node", "dist/db/migrate.js" ]
+          envFrom:
+            - secretRef:
+                name: streaks-postgres-secrets
+
       containers:
         - name: streaks
           image: niloyrudra/streaks

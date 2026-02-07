@@ -12,6 +12,14 @@ spec:
       labels:
         app: progress
     spec:
+      initContainers:
+        - name: db-migrate
+          image: niloyrudra/progress
+          command: [ "node", "dist/db/migrate.js" ]
+          envFrom:
+            - secretRef:
+                name: progress-secrets
+
       containers:
         - name: progress
           image: niloyrudra/progress

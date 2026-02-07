@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+
+    "strict": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@langphy/shared": ["../../shared/dist/index.d.ts"],
+      "@langphy/shared/*": ["../../shared/dist/*"]
+    }
+  },
+
+  "include": ["src/**/*"]
+}

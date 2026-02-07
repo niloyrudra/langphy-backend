@@ -1,22 +1,24 @@
 import { z } from "zod";
+import { BaseEventSchema } from "../base-event.schema.js";
 
 /**
  * lesson.completed.v1
  * Emitted whenever a user lessones in learning
  */
-export const LessonCompletedEventSchema = z.object({
+export const LessonCompletedEventSchema = BaseEventSchema.extend({
     event_id: z.uuid(),
     event_type: z.literal( "lesson.completed" ),
     event_version: z.literal(1),
     user_id: z.uuid(),
     payload: z.object({
-        category_id: z.uuid(),
-        unit_id: z.uuid(),
-        user_id: z.uuid(),
+        // category_id: z.uuid(),
+        // unit_id: z.uuid(),
+        // user_id: z.uuid(),
+        session_key: z.string(),
         lesson_id: z.uuid(),
         lesson_type: z.enum(["quiz",  "practice", "reading", "writing", "speaking", "listening"]),
-        lesson_text: z.string(),
-        occurred_at: z.string().datetime()
+        score: z.number().int().min(0).max(100),
+        duration_ms: z.number().int().nonnegative(),
     })
 });
 

@@ -9,6 +9,7 @@ type LessonType =
   | "listening";
 
 export class PerformanceModel {
+
     static async upsertUser(userId: string) {
         await pgPool.query(
             `
@@ -17,6 +18,32 @@ export class PerformanceModel {
             ON CONFLICT (user_id) DO NOTHING
             `,
             [userId]
+        );
+    }
+
+    static async applyLessonCompeted(input: {
+        userId: string;
+        lessonType: string;
+        score: number;
+        durationMs: number;
+    }) {
+        await pgPool.query(
+            `
+            UPDATE lp_performance
+            SET
+            total_lessons_completed = total_lessons_completed + 1,
+            total_duration_ms = total_duration_ms + $2,
+            ${input.lessonType}_completed = ${input.lessonType}_completed + 1,
+            ${input.lessonType}_score_count = ${input.lessonType}_score_count + 1,
+            avg_${input.lessonType}_score =
+                ((COALESCE(avg_${input.lessonType}_score, 0)
+                * (${input.lessonType}_score_count))
+                + $3)
+                / (${input.lessonType}_score_count + 1),
+            updated_at = now()
+            WHERE user_id = $1
+            `,
+            [input.userId, input.durationMs, input.score]
         );
     }
 

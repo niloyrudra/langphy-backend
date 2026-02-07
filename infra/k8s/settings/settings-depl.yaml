@@ -12,6 +12,14 @@ spec:
       labels:
         app: settings
     spec:
+      initContainers:
+        - name: db-migrate
+          image: niloyrudra/settings
+          command: [ "node", "dist/db/migrate.js" ]
+          envFrom:
+            - secretRef:
+                name: settings-secrets
+
       containers:
         - name: settings
           image: niloyrudra/settings

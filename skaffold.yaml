@@ -8,6 +8,15 @@ build:
   local:
     push: false
   artifacts:
+    - image: niloyrudra/gateway-service
+      context: .
+      docker:
+        dockerfile: services/gateway-service/Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'
+
     - image: niloyrudra/auth
       context: .
       docker:
@@ -190,6 +199,7 @@ profiles:
     deploy:
       kubectl:
         manifests:
+          - infra/k8s/gateway/gateway-depl.yaml
           - infra/k8s/auth/auth-depl.yaml
           - infra/k8s/profile/profile-depl.yaml
           - infra/k8s/settings/settings-depl.yaml
