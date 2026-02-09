@@ -1,6 +1,4 @@
-// import { UserRegisteredEventSchema } from "@langphy/shared/events";
 import { kafka } from "./kafka.client.js"
-// import { TOPICS } from "@langphy/shared/events";
 import { SettingsModel } from "../models/settings.model.js";
 import { TOPICS, UserRegisteredEventSchema } from "@langphy/shared";
 
@@ -8,7 +6,7 @@ const consumer = kafka.consumer({
     groupId: process.env.SERVICE_NAME! + "-group"
 });
 
-export const startSettingsConsumers = async () => {
+export const initSettingsConsumers = async () => {
     await consumer.connect();
     await consumer.subscribe({
         topic: TOPICS.USER_REGISTERED

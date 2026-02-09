@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { BaseEventSchema } from "@langphy/shared";
 // import { mapEventToTopic } from "../routes/event.route.js";
 import { publishEvent } from "../kafka/producer.js";
-import { EventInboxModel } from "../models/event.model.js";
+import { EventInboxModel } from "../models/eventIndex.model.js";
 
 export const postEvent = async (req: Request, res: Response) => {
     try {

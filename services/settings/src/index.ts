@@ -4,7 +4,7 @@ import { SettingsRouter } from "./routes/settings.js";
 import { errorHandler } from "./middlewares/error-handler.js";
 import pkg from "body-parser";
 import { dbRouter } from "./routes/db-route.js";
-import { startSettingsConsumers } from "./kafka/consumer.js";
+import { initSettingsConsumers } from "./kafka/consumer.js";
 const {json} = pkg;
 // import cors from 'cors';
 
@@ -19,7 +19,7 @@ app.use( errorHandler );
 
 const start = async () => {
     try {
-        await startSettingsConsumers();
+        await initSettingsConsumers();
         console.log("Kafka Setting Consumer connected successfully!");
     }
     catch(err) {

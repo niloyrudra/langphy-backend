@@ -13,6 +13,15 @@ export interface UserStreak {
 export class StreakModel {
 
     // Get streak
+    static async findByUserId(userId: string): Promise<UserStreak | null> {
+        const result = await pgPool.query(
+            `SELECT current_streak, longest_streak, last_activity_date FROM lp_streaks WHERE user_id = $1`,
+            [userId]
+        );
+        return result.rows[0] || null;
+    }
+
+    // Get streak
     static async getStreak(userId: string): Promise<UserStreak | null> {
         const result = await pgPool.query(
             `SELECT current_streak, longest_streak, last_activity_date FROM lp_streaks WHERE user_id = $1`,
