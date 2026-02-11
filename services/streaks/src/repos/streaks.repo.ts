@@ -24,9 +24,7 @@ type ApplyActivityResult = {
 };
 
 export class StreakRepo {
-  static async applyActivity(
-    input: ApplyActivityInput
-  ): Promise<ApplyActivityResult> {
+  static async applyActivity( input: ApplyActivityInput ): Promise<ApplyActivityResult> {
     try {
       // 1️⃣ Ensure streak exists
       let streak = await StreakModel.findByUserId(input.userId);

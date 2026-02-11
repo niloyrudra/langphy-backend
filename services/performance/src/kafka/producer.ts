@@ -1,4 +1,4 @@
-import { TOPICS, type BaseEvent, type ProgressUpdatedEvent } from "@langphy/shared";
+import { TOPICS, type BaseEvent, type PerformanceUpdatedEvent } from "@langphy/shared";
 import { kafka } from "./kafka.client.js";
 
 export let producer: ReturnType<typeof kafka.producer> | null = null;
@@ -10,17 +10,17 @@ export const initProducer = async () => {
     while( retries > 0 ) {
         try {
             await producer.connect();
-            console.log("Progress - Kafka Produer connected successfully!");
+            console.log("Performance - Kafka Produer connected successfully!");
             return;
         }
         catch(err: any) {
-            console.log("Progress - Kafka not ready, retrying...", err.message);
+            console.log("Performance - Kafka not ready, retrying...", err.message);
             retries--;
             await new Promise( res => setTimeout( res, 3000 ) );
         }
     }
 
-    throw new Error("Progress - Kafka not ready after retries");
+    throw new Error("Performance - Kafka not ready after retries");
 };
 
 /**
@@ -31,7 +31,7 @@ export const sendRaw = async (
     key: string,
     value: unknown
 ): Promise<void> => {
-    if( !producer ) throw new Error("Progress - Kafka producer not initialized");
+    if( !producer ) throw new Error("Performance - Kafka producer not initialized");
 
     await producer.send({
         topic,
@@ -53,7 +53,7 @@ export const sendRaw = async (
  */
 export const publishEvent = async ( event: BaseEvent ): Promise<void> => {
     await sendRaw(
-        TOPICS.PROGRESS_UPDATED,
+        TOPICS.PERFORMANCE_UPDATED,
         event.user_id,
         event
     );
@@ -66,10 +66,10 @@ export const publishEvent = async ( event: BaseEvent ): Promise<void> => {
  * 
  */
 export const send = async ( event: {user_id: string} ) => {
-    if( !producer ) throw new Error(  "Progress - Kafka producer not initialized");
+    if( !producer ) throw new Error(  "Performance - Kafka producer not initialized");
 
     await producer.send({
-        topic: TOPICS.PROGRESS_UPDATED,
+        topic: TOPICS.PERFORMANCE_UPDATED,
         messages: [
             {
                 key: event.user_id,
@@ -82,4 +82,4 @@ export const send = async ( event: {user_id: string} ) => {
 /* =====================
     EVENT PUBLISHERS
 ===================== */
-export const publishProgressUpdated = async ( event: ProgressUpdatedEvent ) => send( event );
+export const publishPerformanceUpdated = async ( event: PerformanceUpdatedEvent ) => send( event );

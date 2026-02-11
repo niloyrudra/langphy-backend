@@ -3,7 +3,7 @@ import { kafka } from "./kafka.client.js";
 import { producer } from "./producer.js";
 import { TOPICS } from "@langphy/shared";
 import { EventIndexModel } from "../models/eventIndex.model.js";
-import { StreakRepo } from "src/repos/streaks.repo.js";
+import { StreakRepo } from "../repos/streaks.repo.js";
 
 export const consumer = kafka.consumer({
     groupId: process.env.SERVICE_NAME + '-group'

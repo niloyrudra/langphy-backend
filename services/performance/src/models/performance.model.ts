@@ -79,6 +79,26 @@ export class PerformanceModel {
             values.push(score);
         }
 
+        if (lessonType === "listening" && score !== undefined) {
+            scoreUpdateSQL = `
+                , avg_listening_score =
+                    ((COALESCE(avg_listening_score, 0) * listening_score_count) + $2)
+                    / (listening_score_count + 1),
+                listening_score_count = listening_score_count + 1
+            `;
+            values.push(score);
+        }
+
+        if (lessonType === "writing" && score !== undefined) {
+            scoreUpdateSQL = `
+                , avg_writing_score =
+                    ((COALESCE(avg_writing_score, 0) * writing_score_count) + $2)
+                    / (writing_score_count + 1),
+                writing_score_count = writing_score_count + 1
+            `;
+            values.push(score);
+        }
+
         await pgPool.query(
             `
             UPDATE user_performance

@@ -167,6 +167,8 @@ profiles:
     deploy:
       kubectl:
         manifests:
+          - infra/k8s/gateway/gateway-postgres-pvc.yaml
+          - infra/k8s/gateway/gateway-postgres-depl.yaml
           - infra/k8s/auth/auth-postgres-pvc.yaml
           - infra/k8s/auth/auth-postgres-depl.yaml
           - infra/k8s/streaks/streaks-postgres-pvc.yaml
