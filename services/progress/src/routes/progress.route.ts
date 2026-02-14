@@ -4,6 +4,7 @@ import { body } from "express-validator";
 import {
     upsertProgressController,
     getUserProgressController,
+    bulkSyncProgressController,
 } from "../controllers/progress.controller.js";
 
 const router = Router();
@@ -22,5 +23,11 @@ router.post(
 );
 
 router.get("/api/progress/:userId", getUserProgressController);
+
+// ✅ Bulk Sync
+router.post(
+  "/api/progress/bulk-sync/:userId",
+  bulkSyncProgressController
+);
 
 export { router as ProgressRouter };

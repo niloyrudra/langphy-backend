@@ -27,6 +27,8 @@ export const initConsumer = async () => {
 
             // 2️⃣ Apply Progress logic
             const result = await ProgressRepo.applyActivity( {
+                category_id: event.category_id,
+                unit_id: event.unit_id,
                 user_id: event.user_id,
                 content_type: event.content_type,
                 content_id: event.content_id,

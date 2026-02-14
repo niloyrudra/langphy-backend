@@ -1,6 +1,8 @@
 import { ProgressModel } from "../models/progress.model.js";
 
 export interface ProgressInput {
+    category_id: string;
+    unit_id: string;
     user_id: string;
     content_type: string;
     content_id: string;

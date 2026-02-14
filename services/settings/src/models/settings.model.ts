@@ -38,22 +38,50 @@ export class SettingsModel {
     // Create settings
     static async createSettings(data: SettingsData): Promise<UserSettings> {
         try {
+            const query = `
+                INSERT INTO settings (
+                    user_id,
+                    theme,
+                    language,
+                    notifications,
+                    sound_effect,
+                    speaking_service,
+                    reading_service,
+                    listening_service,
+                    writing_service,
+                    practice_service,
+                    quiz_service
+                )
+                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+                ON CONFLICT (user_id)
+                DO UPDATE SET
+                    theme = EXCLUDED.theme,
+                    language = EXCLUDED.language,
+                    notifications = EXCLUDED.notifications,
+                    sound_effect = EXCLUDED.sound_effect,
+                    speaking_service = EXCLUDED.speaking_service,
+                    reading_service = EXCLUDED.reading_service,
+                    listening_service = EXCLUDED.listening_service,
+                    writing_service = EXCLUDED.writing_service,
+                    practice_service = EXCLUDED.practice_service,
+                    quiz_service = EXCLUDED.quiz_service
+                RETURNING *;
+                `;
+
             const result = await pgPool.query(
-                `INSERT INTO lp_settings (user_id,theme,sound_effect,speaking_service,reading_service,writing_service,listening_service,practice_service,quiz_service,notifications,language)
-                 VALUES ($1, COALESCE($2, 'light'), COALESCE($3, true), COALESCE($4, true), COALESCE($5, true), COALESCE($6, true), COALESCE($7, true), COALESCE($8, true), COALESCE($9, true), COALESCE($10, true), COALESCE($11, 'en'))
-                 RETURNING *`,
+                query,
                 [
                     data.user_id,
                     data.theme,
+                    data.language,
+                    data.notifications,
                     data.sound_effect,
                     data.speaking_service,
                     data.reading_service,
-                    data.writing_service,
                     data.listening_service,
+                    data.writing_service,
                     data.practice_service,
                     data.quiz_service,
-                    data.notifications,
-                    data.language
                 ]
             );
             return result.rows[0];
@@ -83,6 +111,18 @@ export class SettingsModel {
         }
     }
 
+    static async upsertUserSettings(user_id: string): Promise<UserSettings> {
+        const result = await pgPool.query(`
+            INSERT INTO lp_settings (user_id, language, theme)
+            VALUES ($1, 'en', 'light')
+            ON CONFLICT (user_id)
+            DO UPDATE SET language = lp_settings.language, theme = lp_settings.theme
+            RETURNING *;
+        `, [user_id]);
+
+        return result.rows[0];
+    }
+
     static async createSettingsIfNotExists( user_id: string ): Promise<UserSettings> {
         try {
             const result = await pgPool.query(
@@ -110,7 +150,7 @@ export class SettingsModel {
             `UPDATE lp_settings
              SET theme = COALESCE($1, theme),
                  speaking_service = COALESCE($2, speaking_service),
-                 reading_service = COALESCE($3, notifications),
+                 reading_service = COALESCE($3, reading_service),
                  writing_service = COALESCE($4, writing_service),
                  listening_service = COALESCE($5, listening_service),
                  practice_service = COALESCE($6, practice_service),

@@ -1,10 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
-// import { v4 as uuidv4 } from 'uuid';
 import { ProgressModel } from "../models/progress.model.js";
 import { RequestValidationError } from "../errors/request-validation-errors.js";
 import { BadRequestError } from "../errors/bad-request-errors.js";
-// import { publishProgressUpdated } from "../kafka/producer.js";
 
 export const upsertProgressController = async (
     req: Request,
@@ -16,6 +14,8 @@ export const upsertProgressController = async (
 
     try {
         const {
+            category_id,
+            unit_id,
             user_id,
             content_type,
             content_id,
@@ -32,6 +32,8 @@ export const upsertProgressController = async (
         }
 
         const progress = await ProgressModel.upsertProgress({
+            category_id,
+            unit_id,
             user_id,
             content_type,
             content_id,
@@ -102,5 +104,67 @@ export const getUserProgressController = async (
     } catch (err) {
         console.error("Get user progress error:", err);
         next(err);
+    }
+};
+
+export const bulkSyncProgressController = async (
+    req: Request,
+    res: Response
+) => {
+    try {
+        const { userId } = req.params;
+        const { items } = req.body;
+
+        if (!items || !Array.isArray(items)) {
+            return res.status(400).json({
+                message: "Items array is required",
+            });
+        }
+
+        // const results = [];
+
+        // for (const item of items) {
+        //   const result = await ProgressModel.upsertProgress({
+        //     user_id: userId as string,
+        //     content_type: item.content_type,
+        //     content_id: item.content_id,
+        //     session_key: item.session_key,
+        //     lesson_order: item.lesson_order ?? 0,
+        //     completed: item.completed,
+        //     score: item.score ?? 0,
+        //     duration_ms: item.duration_ms ?? 0,
+        //     progress_percent: item.progress_percent ?? 0,
+        //   });
+
+        //   results.push(result);
+        // }
+
+        const results = await Promise.all(
+            items.map(item =>
+                ProgressModel.upsertProgress({
+                    category_id: item.category_id,
+                    unit_id: item.unit_id,
+                    user_id: userId as string,
+                    content_type: item.content_type,
+                    content_id: item.content_id,
+                    session_key: item.session_key,
+                    lesson_order: item.lesson_order ?? 0,
+                    completed: item.completed,
+                    score: item.score ?? 0,
+                    duration_ms: item.duration_ms ?? 0,
+                    progress_percent: item.progress_percent ?? 0,
+                })
+            )
+        );
+
+        return res.status(200).json({
+            message: "Bulk sync successful",
+            count: results.length,
+        });
+    } catch (error) {
+        console.error("bulkSyncProgressController error:", error);
+        return res.status(500).json({
+            message: "Bulk sync failed",
+        });
     }
 };

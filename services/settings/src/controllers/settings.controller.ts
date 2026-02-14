@@ -11,21 +11,36 @@ export const validateCreateSettings = [
         .withMessage("user_id must be a valid UUID"),
     body("theme").optional().isIn(["light", "dark"]).withMessage("theme must be 'light' or 'dark'"),
     body("notifications").optional().isBoolean(),
+    body("sound_effect").optional().isBoolean(),
+    body("speaking_service").optional().isBoolean(),
+    body("practice_service").optional().isBoolean(),
+    body("reading_service").optional().isBoolean(),
+    body("listening_service").optional().isBoolean(),
+    body("writing_service").optional().isBoolean(),
+    body("quiz_service").optional().isBoolean(),
     body("language").optional().isString(),
 ];
 
 export const validateUpdateSettings = [
     param("userId").isUUID().withMessage("userId must be a valid UUID"),
     body("theme").optional().isIn(["light", "dark"]),
-    body("notifications").optional().isBoolean(),
     body("language").optional().isString(),
+    body("notifications").optional().isBoolean(),
+    body("sound_effect").optional().isBoolean(),
+    body("speaking_service").optional().isBoolean(),
+    body("practice_service").optional().isBoolean(),
+    body("reading_service").optional().isBoolean(),
+    body("listening_service").optional().isBoolean(),
+    body("writing_service").optional().isBoolean(),
+    body("quiz_service").optional().isBoolean(),
+    // body("updated_at").optional().isNumeric(),
 ];
 
 // Controllers
 export const getSettingsController = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId } = req.params;
-        if (!userId) return res.status(400).json({ message: "userId is required" });
+        // if (!userId) return res.status(400).json({ message: "userId is required" });
         const user_id = typeof userId == 'string' ? userId : '';
         const settings = await SettingsModel.getSettings(user_id);
         if (!settings) return res.status(404).json({ message: "Settings not found" });
@@ -39,7 +54,7 @@ export const getSettingsController = async (req: Request, res: Response, next: N
 export const createSettingsController = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+        // if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
         const settings = await SettingsModel.createSettings(req.body);
         res.status(201).json({ message: "Settings created successfully", settings });
@@ -55,7 +70,7 @@ export const createSettingsController = async (req: Request, res: Response, next
 export const updateSettingsController = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+        // if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
         const { userId } = req.params;
         if (!userId) return res.status(400).json({ message: "userId is required" });

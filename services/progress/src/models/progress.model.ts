@@ -1,6 +1,8 @@
 import { pgPool } from "../db/index.js";
 
 export interface ProgressData {
+    category_id: string;
+    unit_id: string;
     user_id: string;
     content_type: string;
     content_id: string;
@@ -18,6 +20,8 @@ export class ProgressModel {
         const result = await pgPool.query(
             `
             INSERT INTO lp_progress (
+                category_id,
+                unit_id,
                 user_id,
                 content_type,
                 content_id,
@@ -31,6 +35,8 @@ export class ProgressModel {
             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
             ON CONFLICT (user_id, content_type, content_id)
             DO UPDATE SET
+                category_id = EXCLUDED.category_id,
+                unit_id = EXCLUDED.unit_id,
                 session_key = EXCLUDED.session_key,
                 lesson_order = EXCLUDED.lesson_order,
                 completed = EXCLUDED.completed OR lp_progress.completed,
@@ -44,6 +50,8 @@ export class ProgressModel {
             RETURNING *;
             `,
             [
+                data.category_id,
+                data.unit_id,
                 data.user_id,
                 data.content_type,
                 data.content_id,
