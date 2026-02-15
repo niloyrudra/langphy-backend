@@ -2,11 +2,11 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TABLE IF NOT EXISTS lp_progress (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    category_id UUID NOT NULL,
-    unit_id UUID NOT NULL,
+    category_id TEXT NOT NULL,
+    unit_id TEXT NOT NULL,
     user_id UUID NOT NULL,
     content_type TEXT NOT NULL, -- quiz | lesson | practice
-    content_id UUID NOT NULL,
+    content_id TEXT NOT NULL,
     
     session_key TEXT NOT NULL,
     lesson_order INTEGER NOT NULL DEFAULT 0,

@@ -109,9 +109,12 @@ export const getUserProgressController = async (
 
 export const bulkSyncProgressController = async (
     req: Request,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     try {
+        console.log("Incoming progress payload:", JSON.stringify(req.body, null, 2));
+
         const { userId } = req.params;
         const { items } = req.body;
 
@@ -120,24 +123,6 @@ export const bulkSyncProgressController = async (
                 message: "Items array is required",
             });
         }
-
-        // const results = [];
-
-        // for (const item of items) {
-        //   const result = await ProgressModel.upsertProgress({
-        //     user_id: userId as string,
-        //     content_type: item.content_type,
-        //     content_id: item.content_id,
-        //     session_key: item.session_key,
-        //     lesson_order: item.lesson_order ?? 0,
-        //     completed: item.completed,
-        //     score: item.score ?? 0,
-        //     duration_ms: item.duration_ms ?? 0,
-        //     progress_percent: item.progress_percent ?? 0,
-        //   });
-
-        //   results.push(result);
-        // }
 
         const results = await Promise.all(
             items.map(item =>
