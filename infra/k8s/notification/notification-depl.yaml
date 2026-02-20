@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-depl
+spec:
+  selector:
+    matchLabels:
+      app: notification
+  template:
+    metadata:
+      labels:
+        app: notification
+    spec:
+      initContainers:
+        - name: db-migrate
+          image: niloyrudra/notification
+          command: [ "node", "dist/db/migrate.js" ]
+          envFrom:
+            - secretRef:
+                name: notification-secrets
+
+      containers:
+        - name: notification
+          image: niloyrudra/notification
+          env:
+            - name: SERVICE_NAME
+              value: notification-service
+            
+            - name: KAFKA_BROKER
+              value: "kafka-srv:9092"
+
+            - name: PG_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: notification-secrets
+                  key: PG_HOST
+            - name: PG_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: notification-secrets
+                  key: PG_PORT
+            - name: PG_DB
+              valueFrom:
+                secretKeyRef:
+                  name: notification-secrets
+                  key: PG_DB
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: notification-secrets
+                  key: PG_USER
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: notification-secrets
+                  key: PG_PASSWORD
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: notification-secrets
+                  key: JWT_KEY
+          
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          # Ensuring pods restart if Kafka is down
+          readinessProbe:
+            tcpSocket:
+              port: 4011
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            tcpSocket:
+              port: 4011
+            initialDelaySeconds: 15
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-srv
+spec:
+  selector:
+    app: notification
+  ports:
+    - name: notification
+      protocol: TCP
+      port: 4011
+      targetPort: 4011

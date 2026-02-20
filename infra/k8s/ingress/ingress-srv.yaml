@@ -162,6 +162,14 @@ spec:
                 port:
                   number: 4007
 
+          - path: /api/notification/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: notification-srv
+                port:
+                  number: 4011
+
           - path: /api/nlp/?(.*)
             pathType: ImplementationSpecific
             backend:

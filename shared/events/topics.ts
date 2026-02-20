@@ -8,6 +8,9 @@ export const TOPICS = {
     STREAK_UPDATED_DLQ: "streaks.updated.dlq.v1",
 
     PRACTICE_COMPLETED: "practice.completed.v1",
+
+    NOTIFICATION_CREATED: "notification.created.v1",
+    REMINDER_TRIGGERED: "reminder.triggered.v1",
     
     // Progress service related
     PROGRESS_UPDATED: "progress.updated.v1",
