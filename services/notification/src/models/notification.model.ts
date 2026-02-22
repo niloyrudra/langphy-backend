@@ -53,6 +53,7 @@ export class NotificationModel {
                 SELECT * FROM lp_notifications
                 WHERE user_id = $1
                     AND type = $2
+                ORDER BY created_at DESC
                 `,
                 [
                     userId,
@@ -69,7 +70,7 @@ export class NotificationModel {
 
     static async getUserNotifications(userId: string) {
         const result = await pgPool.query(
-            `SELECT * FROM lp_notifications WHERE user_id = $1`,
+            `SELECT * FROM lp_notifications WHERE user_id = $1 ORDER BY created_at DESC`,
             [userId]
         );
         return result.rows;

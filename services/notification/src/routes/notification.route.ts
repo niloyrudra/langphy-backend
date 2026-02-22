@@ -1,38 +1,50 @@
 import { Router } from "express";
-import { body, param } from "express-validator";
-import { createNotification, getNotification, getNotificationByUserAndType } from "src/controllers/notifications.controller.js";
+import { body } from "express-validator";
+import {
+    registerDeviceToken,
+    deleteDeviceToken,
+} from "src/controllers/device.controller.js";
+import {
+    getNotification,
+} from "src/controllers/notifications.controller.js";
+import { errorHandler } from "../middlewares/error-handler.js";
+import { requireAuth } from "../middlewares/require-auth.js";
 
 const router = Router();
 
-router.post(
-    "/api/notification/create",
-    [
-        body("user_id").notEmpty(),
-        body("type").notEmpty(),
-        body("title").notEmpty(),
-        body("body").notEmpty(),
-        body("read").isBoolean(),
-        body("created_at").isDate(),
-        body("data").isJSON().optional()
-    ],
-    createNotification
-);
+/**
+ * CLIENT ROUTES (Authenticated)
+ */
 
+// Get my notifications
 router.get(
-    "/api/notification/:userId",
-    [
-        param("userId").isUUID()
-    ],
+    "/api/notification",
+    requireAuth,
+    errorHandler,
     getNotification
 );
 
-router.get(
-    "/api/notification/:userId/:type",
+// Register device token
+router.post(
+    "/api/notification/devices/register",
+    requireAuth,
     [
-        param("userId").isUUID(),
-        param("type").notEmpty(),
+        body("platform").notEmpty(),
+        body("token").notEmpty()
     ],
-    getNotificationByUserAndType
+    errorHandler,
+    registerDeviceToken
+);
+
+// Delete device token
+router.post(
+    "/api/notification/devices/delete",
+    requireAuth,
+    [
+        body("token").notEmpty()
+    ],
+    errorHandler,
+    deleteDeviceToken
 );
 
 export { router as NotificationRouter };

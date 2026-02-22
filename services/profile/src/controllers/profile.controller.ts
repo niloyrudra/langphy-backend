@@ -3,15 +3,16 @@ import { ProfileModel } from "../models/profile.model.js";
 import { validationResult } from "express-validator";
 import { BadRequestError } from "../errors/bad-request-errors.js";
 import { RequestValidationError } from "../errors/request-validation-errors.js";
-import { DatabaseConnectionErrors } from "../errors/database-connection-errors.js";
+// import { DatabaseConnectionErrors } from "../errors/database-connection-errors.js";
+import type { AuthRequest } from "src/middlewares/require-auth.js";
 
-export const getProfileController = async ( req: Request, res: Response, next: NextFunction ) => {
+export const getProfileController = async ( req: AuthRequest, res: Response, next: NextFunction ) => {
     const errors = validationResult(req);
 
     if( ! errors.isEmpty() ) throw new RequestValidationError( errors.array() );
 
     try {
-        const { user_id } = req.params;
+        const user_id = req.user?.id;
         if(!user_id) throw new BadRequestError("No user id is provides.");
         const _user_id = typeof user_id == 'string' ? user_id : '';
         const profile = await ProfileModel.getProfile( _user_id );
@@ -39,16 +40,16 @@ export const getProfileController = async ( req: Request, res: Response, next: N
     }
 }
 
-export const updateProfileController = async ( req: Request, res: Response, next: NextFunction ) => {
+export const updateProfileController = async ( req: AuthRequest, res: Response ) => {
     const errors = validationResult(req);
 
     if( ! errors.isEmpty() ) throw new RequestValidationError( errors.array() );
 
     try {
         const updatedData = req.body;
-        const {id} = req.params;
-        if(!id) throw new BadRequestError("No id is provided.");
-        const user_id = typeof id == 'string' ? id : '';
+        const userId = req.user?.id;
+        if(!userId) throw new BadRequestError("No id is provided.");
+        const user_id = typeof userId == 'string' ? userId : '';
         const profile = await ProfileModel.updateProfile( user_id, updatedData );
 
         if( profile ) {
@@ -75,7 +76,7 @@ export const updateProfileController = async ( req: Request, res: Response, next
     }
 }
 
-export const createProfileController = async ( req: Request, res: Response, next: NextFunction ) => {
+export const createProfileController = async ( req: Request, res: Response ) => {
     const errors = validationResult(req);
 
     if( ! errors.isEmpty() ) throw new RequestValidationError( errors.array() );

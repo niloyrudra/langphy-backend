@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { getProfileController } from "../controllers/profile.controller.js";
-import { param } from "express-validator";
+import { requireAuth } from "../middlewares/require-auth.js";
 
 const router = Router();
 
 router.get(
-    "/api/profile/:user_id",
-    param("user_id").isUUID(),
+    "/api/profile",
+    requireAuth,
     getProfileController
 );
 

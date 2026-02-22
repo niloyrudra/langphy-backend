@@ -1,4 +1,4 @@
-import type { LessonCompletedEvent } from "@langphy/shared";
+import type { UserRegisteredEvent } from "@langphy/shared";
 import type { NotificationEventHandler } from "../handle.registery.js";
 // import { sendPushNotification } from "../../services/push.service.js";
 import type { Notification } from "../../controllers/notifications.controller.js";
@@ -7,22 +7,22 @@ import { emitNotificationCreated } from "../../kafka/producer.js";
 import { sendExpoPush } from "src/repos/push-notification.repo.js";
 import { upsertUserDailyActivity } from "src/services/user-daily-activity.service.js";
 
-export class LessonCompletedHandler implements NotificationEventHandler<LessonCompletedEvent>
+export class UserRegisteredHandler implements NotificationEventHandler<UserRegisteredEvent>
 {
     supports(eventType: string) {
-        return eventType === "lesson.completed";
+        return eventType === "user.registered";
     }
 
-    async handle(event: LessonCompletedEvent) {
+    async handle(event: UserRegisteredEvent) {
         const notification = {
             id: crypto.randomUUID(),
             user_id: event.user_id,
-            type: "lesson.completed",
-            title: "Lesson Completed 🎉",
-            body: `You scored ${event.payload.score}%`,
+            type: "user.registered",
+            title: "Coongratulations! 🎉",
+            body: `You are registered to Langhy using this email: ${event.payload.email}%`,
             read: false,
             created_at: new Date().toISOString(),
-            data: { lessonId: event.payload.lesson_id },
+            data: { email: event.payload.email, provider: event.payload.provider },
         } as Notification;
 
         await saveNotification(notification);

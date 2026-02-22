@@ -2,11 +2,13 @@ import { Router, type NextFunction, type Request, type Response } from "express"
 import { createProfileController } from "../controllers/profile.controller.js";
 import { body, validationResult } from "express-validator";
 import { RequestValidationError } from "../errors/request-validation-errors.js";
+import { requireAuth } from "../middlewares/require-auth.js";
 
 const router = Router();
 
 router.post(
     "/api/profile/create",
+    requireAuth,
     [
         body('username')
             .trim()

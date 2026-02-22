@@ -6,6 +6,7 @@ import pkg from "body-parser";
 import { dbRouter } from "./routes/db-route.js";
 import { initProducer } from "./kafka/producer.js";
 import { initConsumer } from "./kafka/consumer.js";
+import { startDailyReminderJob } from "./jobs/daily-reminder.job.js";
 const {json} = pkg;
 
 const app = Express();
@@ -30,6 +31,10 @@ const start = async () => {
     catch(err) {
         console.log( "Notifications - Kafka producer failed:", err );
     }
+
+    // 👇 START CRON HERE
+    startDailyReminderJob();
+
     app.listen( 4011, () => console.log("Notifications Service is running on port 4011") );
 }
 start();

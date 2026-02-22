@@ -26,7 +26,7 @@ export class DeviceTokenModel {
     );
   }
 
-  static async deleteToken(token: string) {
+  static async deleteToken( token: string) {
     await pgPool.query(
       `DELETE FROM lp_device_tokens WHERE token = $1`,
       [token]

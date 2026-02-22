@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
 import { RequestValidationError } from "../errors/request-validation-errors.js";
-import { BadRequestError } from "../errors/bad-request-errors.js";
 import { NotificationModel } from "src/models/notification.model.js";
+import type { AuthRequest } from "src/middlewares/require-auth.js";
 
 export interface Notification {
     id: string;
@@ -32,11 +32,12 @@ export const createNotification = async (req: Request, res: Response, next: Next
     }
 }
 
-export const getNotification = async (req: Request, res: Response, next: NextFunction) => {
+export const getNotification = async (req: AuthRequest, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if( !errors.isEmpty() ) throw new RequestValidationError(errors.array());
     try {
-        const notifications = await NotificationModel.getUserNotifications( req.params?.userId as string );
+        const userId = req.user?.id;
+        const notifications = await NotificationModel.getUserNotifications( userId as string );
         return res.status(200).json({
             message: "All notifications",
             notifications
