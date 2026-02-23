@@ -6,11 +6,12 @@ import {
     validateCreateSettings,
     validateUpdateSettings
 } from "../controllers/settings.controller.js";
+import { requireAuth } from "../middlewares/require-auth.js";
 
 const router = Router();
 
-router.get("/api/settings/:userId", getSettingsController);
-router.post("/api/settings", validateCreateSettings, createSettingsController);
-router.put("/api/settings/:userId", validateUpdateSettings, updateSettingsController);
+router.get("/api/settings", requireAuth, getSettingsController);
+router.post("/api/settings", requireAuth, validateCreateSettings, createSettingsController);
+router.put("/api/settings", requireAuth, validateUpdateSettings, updateSettingsController);
 
 export { router as SettingsRouter };

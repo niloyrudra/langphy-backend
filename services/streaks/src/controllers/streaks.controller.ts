@@ -1,10 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 import { StreakModel } from "../models/streaks.model.js";
 import { param, validationResult } from "express-validator";
+import type { AuthRequest } from "../middlewares/require-auth.js";
 
-export const getStreakController = async (req: Request, res: Response, next: NextFunction) => {
+export const getStreakController = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-        const { userId } = req.params;
+        const userId = req.user?.id;
         if (!userId) {
             return res.status(400).json({ message: "userId is required" });
         }
@@ -25,9 +26,9 @@ export const getStreakController = async (req: Request, res: Response, next: Nex
     }
 };
 
-export const createStreakController = async (req: Request, res: Response, next: NextFunction) => {
+export const createStreakController = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-        const { userId } = req.params;
+        const userId = req.user?.id;
         if (!userId) {
             return res.status(400).json({ message: "userId is required" });
         }
@@ -48,14 +49,14 @@ export const createStreakController = async (req: Request, res: Response, next: 
     }
 };
 
-export const updateStreakController = async (req: Request, res: Response, next: NextFunction) => {
+export const updateStreakController = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { userId } = req.params;
+        const userId = req.user?.id;
         if (!userId) {
             return res.status(400).json({ message: "userId is required" });
         }

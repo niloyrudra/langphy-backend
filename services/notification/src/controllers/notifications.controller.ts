@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
 import { RequestValidationError } from "../errors/request-validation-errors.js";
-import { NotificationModel } from "src/models/notification.model.js";
-import type { AuthRequest } from "src/middlewares/require-auth.js";
+import { NotificationModel } from "../models/notification.model.js";
+import type { AuthRequest } from "../middlewares/require-auth.js";
 
 export interface Notification {
     id: string;

@@ -2,8 +2,8 @@ import type { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { RequestValidationError } from "../errors/request-validation-errors.js";
 import { BadRequestError } from "../errors/bad-request-errors.js";
-import { DeviceTokenModel } from "src/models/device-token.model.js";
-import type { AuthRequest } from "src/middlewares/require-auth.js";
+import { DeviceTokenModel } from "../models/device-token.model.js";
+import type { AuthRequest } from "../middlewares/require-auth.js";
 
 export const registerDeviceToken = async ( req: AuthRequest, res: Response ) => {
     const errors = validationResult( req );

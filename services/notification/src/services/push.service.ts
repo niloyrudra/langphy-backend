@@ -1,4 +1,4 @@
-import { DeviceTokenModel } from "src/models/device-token.model.js";
+import { DeviceTokenModel } from "../models/device-token.model.js";
 import type { Notification } from "../controllers/notifications.controller.js";
 import { pushProvider } from "../providers/push.provider.js";
 

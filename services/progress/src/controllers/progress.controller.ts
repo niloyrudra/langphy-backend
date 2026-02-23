@@ -3,6 +3,7 @@ import { validationResult } from "express-validator";
 import { ProgressModel } from "../models/progress.model.js";
 import { RequestValidationError } from "../errors/request-validation-errors.js";
 import { BadRequestError } from "../errors/bad-request-errors.js";
+import type { AuthRequest } from "../middlewares/require-auth.js";
 
 export const upsertProgressController = async (
     req: Request,
@@ -85,12 +86,12 @@ export const upsertProgressController = async (
 };
 
 export const getUserProgressController = async (
-    req: Request,
+    req: AuthRequest,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const { userId } = req.params;
+        const userId = req.user?.id;
         if (!userId) {
             throw new BadRequestError("User ID is required");
         }
@@ -108,14 +109,14 @@ export const getUserProgressController = async (
 };
 
 export const bulkSyncProgressController = async (
-    req: Request,
+    req: AuthRequest,
     res: Response,
     next: NextFunction
 ) => {
     try {
         console.log("Incoming progress payload:", JSON.stringify(req.body, null, 2));
 
-        const { userId } = req.params;
+        const userId = req.user?.id;
         const { items } = req.body;
 
         if (!items || !Array.isArray(items)) {

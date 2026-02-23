@@ -1,4 +1,4 @@
-import { UserDailyActivityModel } from "src/models/user-daily-activity.model.js";
+import { UserDailyActivityModel } from "../models/user-daily-activity.model.js";
 
 export const upsertUserDailyActivity = async (userId: string) => {
     try {

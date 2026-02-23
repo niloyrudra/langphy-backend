@@ -3,10 +3,10 @@ import { body } from "express-validator";
 import {
     registerDeviceToken,
     deleteDeviceToken,
-} from "src/controllers/device.controller.js";
+} from "../controllers/device.controller.js";
 import {
     getNotification,
-} from "src/controllers/notifications.controller.js";
+} from "../controllers/notifications.controller.js";
 import { errorHandler } from "../middlewares/error-handler.js";
 import { requireAuth } from "../middlewares/require-auth.js";
 

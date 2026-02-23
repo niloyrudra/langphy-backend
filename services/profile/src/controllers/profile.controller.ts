@@ -4,7 +4,7 @@ import { validationResult } from "express-validator";
 import { BadRequestError } from "../errors/bad-request-errors.js";
 import { RequestValidationError } from "../errors/request-validation-errors.js";
 // import { DatabaseConnectionErrors } from "../errors/database-connection-errors.js";
-import type { AuthRequest } from "src/middlewares/require-auth.js";
+import type { AuthRequest } from "../middlewares/require-auth.js";
 
 export const getProfileController = async ( req: AuthRequest, res: Response, next: NextFunction ) => {
     const errors = validationResult(req);

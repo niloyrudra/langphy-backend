@@ -4,8 +4,8 @@ import type { NotificationEventHandler } from "../handle.registery.js";
 import type { Notification } from "../../controllers/notifications.controller.js";
 import { saveNotification } from "../../repos/notifications.repo.js";
 import { emitNotificationCreated } from "../../kafka/producer.js";
-import { sendExpoPush } from "src/repos/push-notification.repo.js";
-import { upsertUserDailyActivity } from "src/services/user-daily-activity.service.js";
+import { sendExpoPush } from "../../repos/push-notification.repo.js";
+import { upsertUserDailyActivity } from "../../services/user-daily-activity.service.js";
 
 export class LessonCompletedHandler implements NotificationEventHandler<LessonCompletedEvent>
 {

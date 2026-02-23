@@ -1,6 +1,9 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Response, NextFunction } from "express";
 import { SettingsModel } from "../models/settings.model.js";
 import { body, validationResult, param } from "express-validator";
+import type { AuthRequest } from "../middlewares/require-auth.js";
+import { RequestValidationError } from "../errors/request-validation-errors.js";
+import { BadRequestError } from "../errors/bad-request-errors.js";
 
 // Validation middlewares
 export const validateCreateSettings = [
@@ -37,10 +40,11 @@ export const validateUpdateSettings = [
 ];
 
 // Controllers
-export const getSettingsController = async (req: Request, res: Response, next: NextFunction) => {
+export const getSettingsController = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-        const { userId } = req.params;
-        // if (!userId) return res.status(400).json({ message: "userId is required" });
+        const userId = req.user?.id;
+        if (!userId) throw new BadRequestError( "userId is required" );
+
         const user_id = typeof userId == 'string' ? userId : '';
         const settings = await SettingsModel.getSettings(user_id);
         if (!settings) return res.status(404).json({ message: "Settings not found" });
@@ -51,10 +55,10 @@ export const getSettingsController = async (req: Request, res: Response, next: N
     }
 };
 
-export const createSettingsController = async (req: Request, res: Response, next: NextFunction) => {
+export const createSettingsController = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
         const errors = validationResult(req);
-        // if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+        if (!errors.isEmpty()) throw new RequestValidationError( errors.array() );
 
         const settings = await SettingsModel.createSettings(req.body);
         res.status(201).json({ message: "Settings created successfully", settings });
@@ -67,13 +71,14 @@ export const createSettingsController = async (req: Request, res: Response, next
     }
 };
 
-export const updateSettingsController = async (req: Request, res: Response, next: NextFunction) => {
+export const updateSettingsController = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
         const errors = validationResult(req);
-        // if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+        if (!errors.isEmpty()) throw new RequestValidationError( errors.array() );
 
-        const { userId } = req.params;
-        if (!userId) return res.status(400).json({ message: "userId is required" });
+        const userId = req.user?.id;
+        if (!userId) throw new BadRequestError( "userId is required" );
+
         const user_id = typeof userId == 'string' ? userId : '';
         const settings = await SettingsModel.updateSettings(user_id, req.body);
         res.status(200).json({ message: "Settings updated successfully", settings });

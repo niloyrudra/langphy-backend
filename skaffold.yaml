@@ -151,6 +151,15 @@ build:
         manual:
           - dest: .
             src: 'src/**/*.ts'
+    
+    - image: niloyrudra/notification
+      context: .
+      docker:
+        dockerfile: services/notification/Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'
             
     - image: niloyrudra/nlp-service
       context: services/nlp-service
@@ -169,6 +178,8 @@ profiles:
         manifests:
           - infra/k8s/gateway/gateway-postgres-pvc.yaml
           - infra/k8s/gateway/gateway-postgres-depl.yaml
+          - infra/k8s/notification/notification-postgres-pvc.yaml
+          - infra/k8s/notification/notification-postgres-depl.yaml
           - infra/k8s/auth/auth-postgres-pvc.yaml
           - infra/k8s/auth/auth-postgres-depl.yaml
           - infra/k8s/streaks/streaks-postgres-pvc.yaml
@@ -202,6 +213,7 @@ profiles:
       kubectl:
         manifests:
           - infra/k8s/gateway/gateway-depl.yaml
+          - infra/k8s/notification/notification-depl.yaml
           - infra/k8s/auth/auth-depl.yaml
           - infra/k8s/profile/profile-depl.yaml
           - infra/k8s/settings/settings-depl.yaml
