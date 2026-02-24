@@ -1,7 +1,17 @@
+import json
 import uuid
 import os
 import unicodedata
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException, BackgroundTasks
+# import threading
+# import asyncio
+from redis import Redis
+# from threading import Lock
+# from typing import Dict, Any
+from rq import Queue
+
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+
+from app.jobs.speech_job import process_job
 from app.services.whisper_service import whisper_service
 from app.services.nlp_client import evaluate_text
 from app.services.audio_utils import normalize_audio
@@ -9,99 +19,79 @@ from app.services.scoring import word_confidence
 
 router = APIRouter()
 
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+
+redis_client = Redis(
+    host=REDIS_HOST,
+    port=6379,
+    db=0,
+    decode_responses=True
+)
+
+redis_conn = Redis(host=REDIS_HOST, port=6379)
+queue = Queue("speech", connection=redis_conn)
+
+# --------------------------------------------------
+# Utilities
+# --------------------------------------------------
+
 def normalize_text(s: str) -> str:
-    """Trim and normalize text for NLP evaluation"""
     return unicodedata.normalize("NFC", s.strip())
+
+def set_job(job_id, data):
+    redis_client.setex(
+        f"speech:{job_id}",
+        600,  # auto expire in 10 min
+        json.dumps(data)
+    )
+
+def get_job(job_id):
+    result = redis_client.get(f"speech:{job_id}")
+    return json.loads(result) if result else None
+
+# --------------------------------------------------
+# Routes
+# --------------------------------------------------
 
 @router.post("/api/speech/evaluate")
 async def evaluate_speech(
-    # background_tasks: BackgroundTasks,
     audio: UploadFile = File(...),
     expected_text: str = Form(...)
 ):
-    
-    job_id = str(uuid.uuid4())
-
-    if not audio.content_type.startswith("audio/"):
+    if not audio.content_type or not audio.content_type.startswith("audio/"):
         raise HTTPException(status_code=400, detail="Invalid audio file")
 
-    tmp_path = f"/tmp/{uuid.uuid4()}.m4a"
-    wav_path = None
+    job_id = str(uuid.uuid4())
+    tmp_path = f"/tmp/{job_id}.m4a"
 
     try:
-        # 1️⃣ Save audio
         with open(tmp_path, "wb") as f:
             f.write(await audio.read())
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to save audio")
 
-        # 2️⃣ Normalize
-        wav_path = normalize_audio(tmp_path)
+    set_job(job_id, {"status": "processing"})
 
-        # 3️⃣ Transcribe
-        transcription = whisper_service.transcribe(wav_path)
+    # 🔥 ENQUEUE JOB IN RQ
+    queue.enqueue(
+        process_job,
+        job_id,
+        tmp_path,
+        expected_text,
+        job_id=job_id
+    )
 
-        text = transcription.get("text", "").strip()
-        segments = transcription.get("segments", [])
-
-        if not text:
-            return {
-                "error": "No speech detected",
-                "transcription": "",
-                "segments": [],
-                "words": [],
-                "analysis": None
-            }
-
-        # 4️⃣ NLP evaluation
-        expected_text_clean = expected_text.strip()
-        spoken_clean = text.strip()
-        expected_clean = normalize_text(expected_text_clean)
-        nlp_result = await evaluate_text(
-            expected=expected_clean,
-            spoken=spoken_clean
-        )
-
-        # 5️⃣ Flatten all segments' words
-        words_with_conf = []
-        for segment in transcription["segments"]:
-            for w in segment.get("words", []):  # word timestamps from Whisper
-                words_with_conf.append({
-                    "text": w["word"].strip(),
-                    "confidence": word_confidence(w.get("probability", 0))  # use logprob or probability
-                })
-
-        # 5️ Final response
-        return {
-            "transcription": text,
-            "segments": segments,
-            "words": words_with_conf,
-            "analysis": nlp_result
-        }
-
-    except Exception as e:
-        # 🔒 NEVER crash Expo
-        return {
-            "error": "Speech evaluation failed",
-            "detail": str(e),
-            "transcription": transcription.get("text", ""),
-            "segments": segments if 'segments' in locals() else [],
-            "words": words_with_conf if 'words_with_conf' in locals() else [],
-            "analysis": {}
-        }
-
-    finally:
-        # 🧹 Always clean temp files
-        if os.path.exists(tmp_path):
-            os.remove(tmp_path)
-        if wav_path and os.path.exists(wav_path):
-            os.remove(wav_path)
+    return {
+        "job_id": job_id,
+        "status": "processing"
+    }
 
 
-# @router.get("/api/speech/result/{job_id}")
-# async def get_result(job_id: str):
-#     if job_id not in JOB_RESULTS:
-#         return {"status": "processing"}
+@router.get("/api/speech/result/{job_id}")
+async def get_result(job_id: str):
+    job = get_job(job_id)
 
-#     return {
-#         "status": "done",
-#         "data": JOB_RESULTS[job_id]
-#     }
+    if not job:
+        return {"status": "not_found"}
+
+    return job

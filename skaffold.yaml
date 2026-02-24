@@ -230,7 +230,10 @@ profiles:
           - infra/k8s/listening/listening-depl.yaml
           - infra/k8s/writing/writing-depl.yaml
           - infra/k8s/nlp/nlp-depl.yaml
-          - infra/k8s/speech/speech-depl.yaml
+          # - infra/k8s/speech/speech-depl.yaml
+          - infra/k8s/speech/speech-api-depl.yaml
+          - infra/k8s/speech/speech-worker-depl.yaml
+          - infra/k8s/speech/redis-depl.yaml
           - infra/k8s/kafka/kafka-depl.yaml
           - infra/k8s/kafka/kafka-topic-init.yaml
           - infra/k8s/kafka/zookeeper-depl.yaml

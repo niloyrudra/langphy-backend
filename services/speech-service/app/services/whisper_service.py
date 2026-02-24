@@ -1,24 +1,74 @@
-import whisper
+from faster_whisper import WhisperModel
 
 class WhisperService:
     def __init__(self):
-        self.model = whisper.load_model("small", device="cpu")
+        # INT8 = 2-4x faster on CPU
+        self.model = WhisperModel(
+            "small",
+            device="cpu",
+            compute_type="int8",
+            cpu_threads=4  # adjust to your pod limit
+        )
 
     def transcribe(self, audio_path: str) -> dict:
-        result = self.model.transcribe(
+        segments, info = self.model.transcribe(
             audio_path,
-            fp16=False,
+            # fp16=False,
             language="de",
-            task="transcribe",
+            # task="transcribe",
             word_timestamps=True,
-            verbose=False
+            beam_size=1,            # lower = faster
+            best_of=1,
+            vad_filter=True         # skip silence
+            # verbose=False
         )
+
+        result_segments = []
+
+        for segment in segments :
+            result_segments.append({
+                "start": segment.start,
+                "end": segment.end,
+                "text": segment.text.strip(),
+                "words": [
+                    {
+                        "word": w.word,
+                        "start": w.start,
+                        "end": w.end,
+                        "probability": w.probability
+                    }
+                    for w in segment.words or []
+                ]
+            })
+
         return {
-            "text": result["text"].strip(),
-            "segments": result["segments"]
+            "text": " ".join(s["text"] for s in result_segments),
+            "segments": result_segments
         }
 
 whisper_service = WhisperService()
+
+# import whisper
+
+# class WhisperService:
+#     def __init__(self):
+#         self.model = whisper.load_model("small", device="cpu")
+
+#     def transcribe(self, audio_path: str) -> dict:
+#         result = self.model.transcribe(
+#             audio_path,
+#             fp16=False,
+#             language="de",
+#             task="transcribe",
+#             word_timestamps=True,
+#             verbose=False
+#         )
+#         return {
+#             "text": result["text"].strip(),
+#             "segments": result["segments"]
+#         }
+
+# whisper_service = WhisperService()
 
 # import soundfile as sf
 # import numpy as np

@@ -182,7 +182,7 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: speech-srv
+                name: speech-api-srv
                 port:
                   number: 8001
 

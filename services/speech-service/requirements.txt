@@ -1,13 +1,16 @@
 fastapi
-uvicorn
-openai-whisper==20231117
-# faster-whisper
+uvicorn[standard]
+# openai-whisper==20231117
+faster-whisper
+ctranslate2
 # pydub
 ffmpeg-python
 python-multipart
 httpx
-librosa
-soundfile
-torch==2.3.1
-torchaudio==2.3.1
+# librosa
+# soundfile
+# torch==2.3.1
+# torchaudio==2.3.1
 numpy
+redis
+rq
