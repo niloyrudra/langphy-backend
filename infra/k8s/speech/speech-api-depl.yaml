@@ -21,7 +21,7 @@ spec:
 
           env:
             - name: REDIS_HOST
-              value: redis-srv
+              value: redis
             - name: NLP_SERVICE_URL
               value: http://nlp-srv:8000
 
@@ -49,6 +49,14 @@ spec:
               port: 8001
             initialDelaySeconds: 40
             periodSeconds: 30
+          
+          volumeMounts:
+            - name: audio-storage
+              mountPath: /tmp
+      volumes:
+        - name: audio-storage
+          persistentVolumeClaim:
+            claimName: audio-pvc
 ---
 apiVersion: v1
 kind: Service

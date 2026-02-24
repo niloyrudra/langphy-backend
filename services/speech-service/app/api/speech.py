@@ -12,10 +12,10 @@ from rq import Queue
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 
 from app.jobs.speech_job import process_job
-from app.services.whisper_service import whisper_service
-from app.services.nlp_client import evaluate_text
-from app.services.audio_utils import normalize_audio
-from app.services.scoring import word_confidence
+# from app.services.whisper_service import whisper_service
+# from app.services.nlp_client import evaluate_text
+# from app.services.audio_utils import normalize_audio
+# from app.services.scoring import word_confidence
 
 router = APIRouter()
 
@@ -93,5 +93,7 @@ async def get_result(job_id: str):
 
     if not job:
         return {"status": "not_found"}
+
+    print("Returning job:", job)
 
     return job

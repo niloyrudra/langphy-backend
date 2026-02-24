@@ -20,8 +20,11 @@ spec:
         - name: speech-worker
           image: niloyrudra/speech-service
           imagePullPolicy: IfNotPresent
-          command: ["python"]
-          args: ["app/worker.py"]
+          # command: ["python"]
+          # args: ["app/worker.py"]
+          # command: ["python", "-m", "rq", "worker", "speech"]
+          command: ["rq"]
+          args: ["worker", "speech"]
           env:
             - name: REDIS_HOST
               value: redis
@@ -37,3 +40,11 @@ spec:
             limits:
               cpu: "4000m"
               memory: "4Gi"
+          
+          volumeMounts:
+            - name: audio-storage
+              mountPath: /tmp
+      volumes:
+        - name: audio-storage
+          persistentVolumeClaim:
+            claimName: audio-pvc

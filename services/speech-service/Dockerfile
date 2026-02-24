@@ -10,6 +10,10 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
+# Ensure app directory is on Python path
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
 # Copy requirements first for caching
 COPY requirements.txt .
 
@@ -22,9 +26,6 @@ COPY . .
 
 # Expose your app port
 EXPOSE 8001
-
-# Set environment variables (optional)
-ENV PYTHONUNBUFFERED=1
 
 # Run Uvicorn
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8001"]

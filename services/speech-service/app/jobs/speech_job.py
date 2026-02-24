@@ -4,10 +4,10 @@ import unicodedata
 import json
 import redis
 
-from app.services.whisper_service import whisper_service
-from app.services.nlp_client import evaluate_text
-from app.services.audio_utils import normalize_audio
-from app.services.scoring import word_confidence
+# from app.services.whisper_service import whisper_service
+# from app.services.nlp_client import evaluate_text
+# from app.services.audio_utils import normalize_audio
+# from app.services.scoring import word_confidence
 
 redis_client = redis.Redis(
     host=os.getenv("REDIS_HOST", "localhost"),
@@ -27,6 +27,12 @@ def set_job(job_id, data):
     )
 
 def process_job(job_id: str, tmp_path: str, expected_text: str):
+
+    from app.services.whisper_service import whisper_service
+    from app.services.nlp_client import evaluate_text
+    from app.services.audio_utils import normalize_audio
+    from app.services.scoring import word_confidence
+
     wav_path = None
 
     try:
@@ -67,6 +73,8 @@ def process_job(job_id: str, tmp_path: str, expected_text: str):
                         w.get("probability", 0)
                     )
                 })
+
+        print("FINAL RESULT:", nlp_result)
 
         set_job(job_id, {
             "status": "done",

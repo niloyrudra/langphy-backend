@@ -25,7 +25,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_lp_users_updated_at
+CREATE TRIGGER trg_lp_settings_updated_at
 BEFORE UPDATE ON lp_settings
 FOR EACH ROW
 EXECUTE FUNCTION set_updated_at();
