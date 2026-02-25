@@ -65,13 +65,16 @@ export const publishEvent = async (event: BaseEvent): Promise<void> => {
  * @param event 
  * @returns void
  */
-const send = async (event: {user_id: string}) => {
+const send = async (
+  topic: string,
+  event: BaseEvent // {user_id: string}
+) => {
   if( !producer ) {
     throw new Error("Kafka producer not initialized");
   }
 
   await producer.send({
-    topic: TOPICS.USER_REGISTERED,
+    topic, // topic: TOPICS.USER_REGISTERED,
     messages: [
       {
         key: event.user_id,
@@ -80,15 +83,30 @@ const send = async (event: {user_id: string}) => {
     ],
   });
 };
+// const send = async (event: {user_id: string}) => {
+//   if( !producer ) {
+//     throw new Error("Kafka producer not initialized");
+//   }
+
+//   await producer.send({
+//     topic: TOPICS.USER_REGISTERED,
+//     messages: [
+//       {
+//         key: event.user_id,
+//         value: JSON.stringify(event),
+//       },
+//     ],
+//   });
+// };
 
 /* =====================
     EVENT PUBLISHERS
 ===================== */
 
-export const publishUserRegistered = async ( event: UserRegisteredEvent ) => send(event);
+export const publishUserRegistered = async ( event: UserRegisteredEvent ) => send(TOPICS.USER_REGISTERED, event);
 
-export const publishUserDeleted = async ( event: UserDeletedEvent ) => send(event);
+export const publishUserDeleted = async ( event: UserDeletedEvent ) => send(TOPICS.USER_DELETED, event);
 
-export const publishUserSignedOut = async ( event: UserSignedOutEvent ) => send(event);
+export const publishUserSignedOut = async ( event: UserSignedOutEvent ) => send( TOPICS.USER_SIGNED_OUT, event);
 
-export const publishUserPasswordChanged = async ( event: UserPasswordChangedEvent ) => send(event);
+export const publishUserPasswordChanged = async ( event: UserPasswordChangedEvent ) => send( TOPICS.USER_PASSWORD_CHANGED, event);

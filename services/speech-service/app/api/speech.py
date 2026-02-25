@@ -2,20 +2,12 @@ import json
 import uuid
 import os
 import unicodedata
-# import threading
-# import asyncio
 from redis import Redis
-# from threading import Lock
-# from typing import Dict, Any
 from rq import Queue
 
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 
 from app.jobs.speech_job import process_job
-# from app.services.whisper_service import whisper_service
-# from app.services.nlp_client import evaluate_text
-# from app.services.audio_utils import normalize_audio
-# from app.services.scoring import word_confidence
 
 router = APIRouter()
 

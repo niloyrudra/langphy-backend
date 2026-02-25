@@ -1,17 +1,18 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { validationResult } from "express-validator";
 import { RequestValidationError } from "../errors/request-validation-errors.js";
 import { BadRequestError } from "../errors/bad-request-errors.js";
 import { UserModel } from "../models/user.model.js";
 import { publishUserDeleted } from "../kafka/producer.js";
+import type { AuthRequest } from "../middlewares/require-auth.js";
 
-export const deleteController = async ( req: Request, res: Response ) => {
+export const deleteController = async ( req: AuthRequest, res: Response ) => {
     const errors = validationResult(req);
         
     if( ! errors.isEmpty() ) throw new RequestValidationError( errors.array() );
             
-    const { userId } = req.body;
+    const userId = req?.user?.id;
 
     if( !userId ) {
         throw new BadRequestError( "User ID is missing!" );

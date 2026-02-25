@@ -1,5 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
 CREATE TABLE lp_device_tokens (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
@@ -12,4 +10,4 @@ CREATE TABLE lp_device_tokens (
 );
 
 CREATE INDEX idx_device_tokens_user_id
-ON device_tokens(user_id);
+ON lp_device_tokens(user_id);

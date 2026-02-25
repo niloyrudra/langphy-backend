@@ -1,6 +1,7 @@
 import { kafka } from "./kafka.client.js";
 import { ProfileModel } from "../models/profile.model.js";
-import { TOPICS, UserRegisteredEventSchema } from "@langphy/shared";
+import { TOPICS, UserDeletedEventSchema, UserRegisteredEventSchema } from "@langphy/shared";
+import { EventIndexModel } from "../models/eventIndex.model.js";
 
 const consumer = kafka.consumer({
     groupId: process.env.SERVICE_NAME! + '-group'
@@ -8,28 +9,58 @@ const consumer = kafka.consumer({
 
 export const startProfileConsumers = async () => {
     await consumer.connect();
+
     await consumer.subscribe({
         topic: TOPICS.USER_REGISTERED,
+    });
+
+    await consumer.subscribe({
+        topic: TOPICS.USER_DELETED
     });
 
     console.log(`[${process.env.SERVICE_NAME}] Kafka is connected`);
 
     await consumer.run({
-        eachMessage: async ({ message }) => {
-            const event = UserRegisteredEventSchema.parse(
-                JSON.parse( message.value!.toString() )
-            );
-            try {
-                const exists = await ProfileModel.profileIfNotExists( event.user_id );
-                if( exists ) return;
-    
-                await ProfileModel.createProfileIfNotExists( event.user_id, event.payload.email );
-                console.log("✅ Profile created for user:", event.user_id);
+        eachMessage: async ({ topic, message }) => {
+            if(!message?.value) return;
+
+            const raw = JSON.parse(message.value.toString());
+
+            if ( topic === TOPICS.USER_DELETED ) {
+                const event = UserDeletedEventSchema.parse( raw );
+                try {
+                    if (await EventIndexModel.exists(event.event_id)) return;
+
+                    await ProfileModel.deleteProfileById(event.user_id);
+
+                    await EventIndexModel.markProcessed(event);
+
+                    console.log("🗑 Profile deleted for:", event.user_id);
+                }
+                catch(err) {
+                    console.error("Profile deletion failed:", err);
+                }
             }
-            catch(err) {
-                console.error("Profile creation failed:", err);
-                console.error("ℹ️ Profile already exists for user:", event.user_id);
-                // throw err;
+
+            if( topic === TOPICS.USER_REGISTERED ) {
+                const event = UserRegisteredEventSchema.parse( raw );
+                try {
+                    const exists = await ProfileModel.profileIfNotExists( event.user_id );
+                    if( exists ) return;
+
+                    if (await EventIndexModel.exists(event.event_id)) return;
+
+                    await ProfileModel.createProfileIfNotExists( event.user_id, event.payload.email );
+
+                    await EventIndexModel.markProcessed(event);
+        
+                    console.log("✅ Profile created for user:", event.user_id);
+                }
+                catch(err) {
+                    console.error("Profile creation failed:", err);
+                    console.error("ℹ️ Profile already exists for user:", event.user_id);
+                    // throw err;
+                }
             }
         },
     });

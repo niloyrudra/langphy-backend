@@ -10,5 +10,5 @@ CREATE TABLE IF NOT EXISTS lp_notifications (
     data JSON,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
 
-    INDEX(user_id)
+    UNIQUE(user_id) -- INDEX(user_id)
 );

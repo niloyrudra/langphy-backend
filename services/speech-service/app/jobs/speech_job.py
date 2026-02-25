@@ -4,11 +4,6 @@ import unicodedata
 import json
 import redis
 
-# from app.services.whisper_service import whisper_service
-# from app.services.nlp_client import evaluate_text
-# from app.services.audio_utils import normalize_audio
-# from app.services.scoring import word_confidence
-
 redis_client = redis.Redis(
     host=os.getenv("REDIS_HOST", "localhost"),
     port=6379,

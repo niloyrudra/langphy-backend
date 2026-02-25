@@ -41,6 +41,19 @@ export class ProfileModel {
         }
     }
 
+    static async deleteProfileById(user_id: string) {
+        try {
+            return await pgPool.query(
+                `DELETE FROM lp_profiles WHERE user_id = $1`,
+                [user_id]
+            );
+        }
+        catch( err: any ) {
+            console.error("deleteProfileById error:", err);
+            throw err;
+        }
+    }
+
     static async updateProfile(id: string, userData: UserData): Promise<UserProfile> {
 
         // const existing = await pgPool.query(

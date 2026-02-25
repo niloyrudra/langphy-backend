@@ -1,30 +1,33 @@
-import type { Request, Response } from "express";
-// import bcrypt from "bcrypt";
+import type { Response } from "express";
 import { v4 as uuidv4 } from "uuid";
-
 import { UserModel } from "../models/user.model.js";
-import { DatabaseConnectionErrors } from "../errors/database-connection-errors.js";
-// import { ConflictValidationError } from "../errors/conflict-errors.js";
 import { validationResult } from "express-validator";
 import { RequestValidationError } from "../errors/request-validation-errors.js";
 import { BadRequestError } from "../errors/bad-request-errors.js";
 import { publishUserPasswordChanged } from "../kafka/producer.js";
+import type { AuthRequest } from "../middlewares/require-auth.js";
 
-export const resetPasswordByEmailController = async ( req: Request, res: Response ) => {
+export const resetPasswordByEmailController = async ( req: AuthRequest, res: Response ) => {
     const errors = validationResult(req);
     
     if( ! errors.isEmpty() ) throw new RequestValidationError( errors.array() );
-            
+    
+    const user_email = req.user?.email;
     const { email, password } = req.body;
-
+    if( !user_email ) {
+        throw new BadRequestError( "User is not authorized!" );
+    }
+    if( user_email.trim() !== email.trim() ) {
+        throw new BadRequestError( "Email is not in database!" );
+    }
     try {
-        const existingUser = await UserModel.findByEmail( email );
+        const existingUser = await UserModel.findByEmail( user_email as string );
 
         if( !existingUser ) {
             throw new BadRequestError( "Email is not in use!" );
         }
 
-        const user = await UserModel.resetPasswordByEmail( email, password );
+        const user = await UserModel.resetPasswordByEmail( user_email as string, password );
 
         /** KAFKA */
         /**
@@ -60,12 +63,14 @@ export const resetPasswordByEmailController = async ( req: Request, res: Respons
     }
 };
 
-export const resetPasswordByUserIdController = async ( req: Request, res: Response ) => {
+export const resetPasswordByUserIdController = async ( req: AuthRequest, res: Response ) => {
     const errors = validationResult( req );
     if( ! errors.isEmpty() ) throw new RequestValidationError( errors.array() );
-    const { password, user_id } = req.body;
+    const user_id = req.user?.id;
+    const { password } = req.body;
+    if(!user_id) throw new BadRequestError("User is not authorized!")
     try {
-        const user = await UserModel.resetPasswordByUserId( user_id, password );
+        const user = await UserModel.resetPasswordByUserId( user_id as string, password );
         /** KAFKA */
         /**
          * Emit user.passwrd.changed event

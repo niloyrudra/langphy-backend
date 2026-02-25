@@ -1,8 +1,7 @@
 import { handleSessionCompleted } from "../services/performance.service.js";
 import { EventIndexModel } from "../models/eventIndex.model.js";
-import { PerformanceModel } from "../models/performance.model.js";
 import { kafka } from "./kafka.client.js";
-import { PerformanceUpdatedEventSchema, ProgressUpdatedEventSchema, TOPICS } from "@langphy/shared";
+import { PerformanceUpdatedEventSchema, TOPICS } from "@langphy/shared";
 import { producer } from "./producer.js";
 
 const consumer = kafka.consumer({
@@ -13,9 +12,8 @@ export const initConsumer = async () => {
     await consumer.connect();
     
     await consumer.subscribe({
-        // topic: TOPICS.PROGRESS_UPDATED,
         topic: TOPICS.SESSION_COMPLETED,
-        fromBeginning: true
+        fromBeginning: false
     });
 
     await consumer.run({
@@ -57,25 +55,6 @@ export const initConsumer = async () => {
 
         }
     });
-
-    // await consumer.run({
-    //     eachMessage: async ({ message }) => {
-    //         if(!message.value) return;
-
-    //         const raw = JSON.parse( message.value!.toString() );
-    //         const event = ProgressUpdatedEventSchema.parse(raw);
-
-    //         if(!event.payload.completed) return;
-
-    //         await PerformanceModel.updateOnCompletion(
-    //             event.user_id,
-    //             event.payload.lesson_type,
-    //             event.payload.score
-    //         );
-
-    //         console.log(`📊 Performance updated for user ${event.user_id}`);
-    //     },
-    // });
 };
 
 export const stopConsumer = async () => {

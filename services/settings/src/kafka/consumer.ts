@@ -17,8 +17,8 @@ export const initSettingsConsumers = async () => {
     await consumer.run({
         eachMessage: async ({ message }) => {
             if (!message.value) {
-            console.warn("Empty Kafka message");
-            return;
+                console.warn("Empty Kafka message");
+                return;
             }
 
             let event;
@@ -47,38 +47,9 @@ export const initSettingsConsumers = async () => {
                     console.warn("⚠️ Settings insert returned nothing (may already exist)");
                 }
 
-                // await SettingsModel.upsertUserSettings(event.user_id);
-                // console.log("✅ Settings ensured for user:", event.user_id);
-
             } catch (err) {
                 console.error("Settings creation failed:", err);
             }
         },
     });
-
-    // await consumer.run({
-    //     eachMessage: async ({ message }) => {
-    //         if (!message.value) {
-    //             console.warn("Empty Kafka message");
-    //             return;
-    //         }
-
-    //         const event = UserRegisteredEventSchema.parse(
-    //             JSON.parse( message.value!.toString() )
-    //         );
-
-    //         try {
-    //             const exists = await SettingsModel.settingsIfNotExists( event.user_id );
-    //             if( exists ) return;
-    
-    //             await SettingsModel.createSettingsIfNotExists( event.user_id );
-    //             console.log("✅ Settings created for user:", event.user_id);
-    //         }
-    //         catch(err) {
-    //             console.error("Settings creation failed:", err);
-    //             console.log("✅ settings creation failed for user:", event.user_id);
-    //             // throw err;
-    //         }
-    //     },
-    // });
 }
