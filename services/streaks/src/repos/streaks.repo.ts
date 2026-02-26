@@ -64,4 +64,14 @@ export class StreakRepo {
       };
     }
   }
+
+  static async deleteStreak( user_id: string ) {
+    try {
+      return await StreakModel.deleteStreakByUserId( user_id );
+    }
+    catch(error) {
+      console.error("deleteStreakByUserId error:", error);
+      return false;
+    }
+  }
 }

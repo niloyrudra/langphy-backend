@@ -6,6 +6,7 @@ import { BadRequestError } from "../errors/bad-request-errors.js";
 import { UserModel } from "../models/user.model.js";
 import { publishUserDeleted } from "../kafka/producer.js";
 import type { AuthRequest } from "../middlewares/require-auth.js";
+import { DeletedUsersRepo } from "src/repos/deleted-users.repo.js";
 
 export const deleteController = async ( req: AuthRequest, res: Response ) => {
     const errors = validationResult(req);
@@ -20,7 +21,8 @@ export const deleteController = async ( req: AuthRequest, res: Response ) => {
 
     try {
 
-        const response = await UserModel.delete(userId);
+        await UserModel.delete(userId);
+        await DeletedUsersRepo.insert( userId );
 
         /** KAFKA */
         /**

@@ -103,4 +103,11 @@ export class ProgressModel {
         );
         return result.rows;
     }
+
+    static async deleteProgressByUserId( userId: string ) {
+        return await pgPool.query(
+            `DELETE FROM lp_progress WHERE user_id = $1`,
+            [userId]
+        );
+    }
 }

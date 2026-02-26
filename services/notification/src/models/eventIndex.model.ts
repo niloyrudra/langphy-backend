@@ -50,4 +50,16 @@ export class EventIndexModel {
             console.error("Progress EventInbox markProcessed error:", error);
         }
     }
+
+    static async clearProcessed( user_id: string ) {
+        try {
+            await pgPool.query(
+                `DELETE FROM event_inbox WHERE user_id = $1`,
+                [user_id]
+            );
+        }
+        catch(error) {
+            console.error("Progress EventInbox clearProcessed error:", error);
+        }
+    }
 };

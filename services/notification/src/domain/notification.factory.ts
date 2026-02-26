@@ -6,7 +6,7 @@ export class NotificationFactory {
         return {
             id: crypto.randomUUID(),
             user_id: event.user_id,
-            type: "lesson.completed",
+            type: "lesson.completed.v1",
             title: "Lesson Completed 🎉",
             body: `You scored ${event.payload.score}%.`,
             read: false,
@@ -21,7 +21,7 @@ export class NotificationFactory {
         return {
             id: crypto.randomUUID(),
             user_id: event.user_id,
-            type: "streak.updated",
+            type: "streak.updated.v1",
             title: "Streak Updated 🎉",
             body: `Your current streak is ${event.payload.current_streak}.`,
             read: false,

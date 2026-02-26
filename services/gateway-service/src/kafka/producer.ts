@@ -4,29 +4,29 @@ import { kafka } from "./kafka.client.js";
 let producer: ReturnType<typeof kafka.producer> | null = null;
 
 export const initProducer = async () => {
-    if( !producer ) return producer;
+  if( !producer ) return producer;
 
-    producer = kafka.producer({
-        allowAutoTopicCreation: false,
-        idempotent: true
-    });
+  producer = kafka.producer({
+    allowAutoTopicCreation: false,
+    idempotent: true
+  });
 
-    let retries = 10;
+  let retries = 10;
 
-    while( retries > 0 ) {
-        try {
-            await producer.connect();
-            console.log("✅ Kafka Producer connected");
-            return producer;
-        }
-        catch(error) {
-            retries--;
-            console.warn("⏳ Kafka producer retrying...", retries);
-            await new Promise( (r) => setTimeout(r, 3000) );
-        }
+  while( retries > 0 ) {
+    try {
+      await producer.connect();
+      console.log("✅ Kafka Producer connected");
+      return producer;
     }
+    catch(error) {
+      retries--;
+      console.warn("⏳ Kafka producer retrying...", retries);
+      await new Promise( (r) => setTimeout(r, 3000) );
+    }
+  }
 
-    throw new Error("❌ Kafka Event Producer failed to connect");
+  throw new Error("❌ Kafka Event Producer failed to connect");
 };
 
 const sendRaw = async (
@@ -77,6 +77,15 @@ const resolveTopic = (eventType: string): string => {
 
     case "performance.updated.v1":
       return TOPICS.PERFORMANCE_UPDATED;
+
+    case "notification.created.v1":
+      return TOPICS.NOTIFICATION_CREATED;
+
+    case "reminder.triggered.v1":
+      return TOPICS.REMINDER_TRIGGERED;
+
+    case "achievement.unlocked.v1":
+      return TOPICS.ACHIEVEMENT_UNLOCKED;
 
     default:
       throw new Error(`Unknown event type: ${eventType}`);

@@ -12,6 +12,9 @@ export * from "./session/index.js";
 export * from "./performance/index.js";
 
 export * from "./streak-updated/index.js";
+
+export * from "./settings-updated/index.js";
+
 export * from "./progress/index.js";
 
 export * from "./achievement/index.js";

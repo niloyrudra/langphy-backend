@@ -49,4 +49,17 @@ export class SessionAttemptRepo {
             console.error("Attempt Repo insertOnce error:", error);
         }
     }
+
+    static async deleteSessionAttemptsByUserId(userId: string) {
+        try {
+            return await pgPool.query(
+                `DELETE FROM lp_session_attempts WHERE user_id = $1`,
+                [userId]
+            );
+        }
+        catch(error) {
+            console.error("deleteSessionAttemptsByUserId error:", error);
+            return false;
+        }
+    }
 }

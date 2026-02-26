@@ -1,19 +1,22 @@
 import type { LessonCompletedEvent } from "@langphy/shared";
 import type { NotificationEventHandler } from "../handle.registery.js";
-// import { sendPushNotification } from "../../services/push.service.js";
 import type { Notification } from "../../controllers/notifications.controller.js";
 import { saveNotification } from "../../repos/notifications.repo.js";
 import { emitNotificationCreated } from "../../kafka/producer.js";
 import { sendExpoPush } from "../../repos/push-notification.repo.js";
 import { upsertUserDailyActivity } from "../../services/user-daily-activity.service.js";
+import { DeletedUsersRepo } from "../../repos/deleted-users.repo.js";
 
 export class LessonCompletedHandler implements NotificationEventHandler<LessonCompletedEvent>
 {
     supports(eventType: string) {
-        return eventType === "lesson.completed";
+        return eventType === "lesson.completed.v1";
     }
 
     async handle(event: LessonCompletedEvent) {
+        if (await DeletedUsersRepo.exists(event.user_id)) {
+            return;
+        }
         const notification = {
             id: crypto.randomUUID(),
             user_id: event.user_id,
@@ -28,7 +31,6 @@ export class LessonCompletedHandler implements NotificationEventHandler<LessonCo
         await saveNotification(notification);
         await emitNotificationCreated(notification);
         
-        // await sendPushNotification(notification);
         await sendExpoPush(notification);
 
         // Upsert user daily activity

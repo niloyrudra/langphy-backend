@@ -2,6 +2,7 @@ import { kafka } from "./kafka.client.js";
 import { ProfileModel } from "../models/profile.model.js";
 import { TOPICS, UserDeletedEventSchema, UserRegisteredEventSchema } from "@langphy/shared";
 import { EventIndexModel } from "../models/eventIndex.model.js";
+import { DeletedUsersRepo } from "../repos/deleted-users.repo.js";
 
 const consumer = kafka.consumer({
     groupId: process.env.SERVICE_NAME! + '-group'
@@ -31,9 +32,12 @@ export const startProfileConsumers = async () => {
                 try {
                     if (await EventIndexModel.exists(event.event_id)) return;
 
+                    await DeletedUsersRepo.insert( event.user_id );
+                    
                     await ProfileModel.deleteProfileById(event.user_id);
 
                     await EventIndexModel.markProcessed(event);
+
 
                     console.log("🗑 Profile deleted for:", event.user_id);
                 }

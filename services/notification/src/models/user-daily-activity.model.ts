@@ -23,4 +23,13 @@ export class UserDailyActivityModel {
     );
   }
 
+  static async deleteUserDailyActivity(userId: string) {
+    await pgPool.query(
+      `
+      DELETE FROM lp_user_daily_activity WHERE user_id = $1
+      `,
+      [userId]
+    );
+  }
+
 }

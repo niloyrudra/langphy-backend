@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/controllers/event.controller.ts","./src/db/index.ts","./src/kafka/kafka.client.ts","./src/kafka/producer.ts","./src/models/eventindex.model.ts","./src/routes/event.route.ts","./src/services/event.service.ts"],"version":"5.9.3"}
+{"root":["./src/index.ts","./src/controllers/event.controller.ts","./src/db/index.ts","./src/kafka/kafka.client.ts","./src/kafka/producer.ts","./src/models/deleted-users.model.ts","./src/models/eventindex.model.ts","./src/repos/deleted-users.repo.ts","./src/routes/event.route.ts"],"version":"5.9.3"}

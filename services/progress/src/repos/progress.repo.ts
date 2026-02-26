@@ -40,4 +40,13 @@ export class ProgressRepo {
             }
         }
     }
+
+    static async deleteProgress( user_id: string ) {
+        try {
+            return await ProgressModel.deleteProgressByUserId( user_id );
+        }
+        catch(error) {
+            console.error( "deleteProgress error:", error );
+        }
+    }
 }

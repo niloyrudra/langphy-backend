@@ -144,6 +144,22 @@ export class SettingsModel {
         }
     }
 
+    static async deleteSettingsByUserId( user_id: string ): Promise<boolean> {
+        try {
+            const result = await pgPool.query(
+                `
+                DELETE FROM lp_settings WHERE user_id = $1
+                `,
+                [user_id]
+            );
+            return true;
+        } catch (error: any) {
+            // Handle unique user_id violation (duplicate row)
+            console.error("deleteSettingsByUserId error:", error);
+            return false;
+        }
+    }
+
     // Update settings
     static async updateSettings(userId: string, data: SettingsData): Promise<UserSettings> {
         const result = await pgPool.query(

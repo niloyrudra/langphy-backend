@@ -79,4 +79,17 @@ export class SessionPerformanceRepo {
             return null;
         }
     }
+
+    static async deleteSessionPerformanceByUserId(userId: string) {
+        try {
+            return await pgPool.query(
+                `DELETE FROM lp_session_performance WHERE user_id = $1`,
+                [userId]
+            );
+        }
+        catch(error) {
+            console.error("deleteSessionPerformanceByUserId error:", error);
+            return false;
+        }
+    }
 }

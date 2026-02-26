@@ -11,14 +11,16 @@ export const LessonCompletedEventSchema = BaseEventSchema.extend({
     event_version: z.literal(1),
     user_id: z.uuid(),
     payload: z.object({
-        // category_id: z.uuid(),
-        // unit_id: z.uuid(),
-        // user_id: z.uuid(),
+        category_id: z.uuid(),
+        unit_id: z.uuid(),
         session_key: z.string(),
         lesson_id: z.uuid(),
+        lesson_order: z.number(),
         lesson_type: z.enum(["quiz",  "practice", "reading", "writing", "speaking", "listening"]),
-        score: z.number().int().min(0).max(100),
-        duration_ms: z.number().int().nonnegative(),
+        completed: z.boolean(),
+        duration_ms: z.number(),
+        progress_percent: z.number(),
+        score: z.number().min(0).max(100).optional()
     })
 });
 

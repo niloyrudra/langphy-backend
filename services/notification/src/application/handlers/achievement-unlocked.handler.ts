@@ -4,14 +4,18 @@ import { sendPushNotification } from "../../services/push.service.js";
 import type { Notification } from "../../controllers/notifications.controller.js";
 import { saveNotification } from "../../repos/notifications.repo.js";
 import { emitNotificationCreated } from "../../kafka/producer.js";
+import { DeletedUsersRepo } from "../../repos/deleted-users.repo.js";
 
 export class AchievementUnlockedHandler implements NotificationEventHandler<AchievementUnlockedEvent>
 {
-    supports(eventType: string) {
-        return eventType === "achievement.unlocked";
-    }
+    // supports(eventType: string) {
+    //     return eventType === "achievement.unlocked";
+    // }
 
     async handle(event: AchievementUnlockedEvent) {
+        if (await DeletedUsersRepo.exists(event.user_id)) {
+            return;
+        }
         const notification = {
             id: crypto.randomUUID(),
             user_id: event.user_id,

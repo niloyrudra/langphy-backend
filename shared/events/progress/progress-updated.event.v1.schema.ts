@@ -13,9 +13,12 @@ export const ProgressUpdatedEventSchema = z.object({
     payload: z.object({
         category_id: z.uuid(),
         unit_id: z.uuid(),
+        session_key: z.string(),
         lesson_id: z.uuid(),
+        lesson_order: z.number(),
         lesson_type: z.enum(["quiz",  "practice", "reading", "writing", "speaking", "listening"]),
         completed: z.boolean(),
+        duration_ms: z.number(),
         progress_percent: z.number(),
         score: z.number().min(0).max(100).optional()
     })

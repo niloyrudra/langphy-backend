@@ -121,6 +121,19 @@ export class PerformanceModel {
 
         return res.rows[0] ?? null;
     }
+
+    static async deletePerformanceByUserId(userId: string) {
+        try {
+            return await pgPool.query(
+                `DELETE FROM user_performance WHERE user_id = $1`,
+                [userId]
+            );
+        }
+        catch(error) {
+            console.error("deletePerformanceByUserId error:", error);
+            return false;
+        }
+    }
 }
 
 // import { pgPool } from "../db/index.js";

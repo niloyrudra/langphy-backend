@@ -32,4 +32,11 @@ export class DeviceTokenModel {
       [token]
     );
   }
+
+  static async deletePushTokenByUserId( user_id: string) {
+    await pgPool.query(
+      `DELETE FROM lp_device_tokens WHERE user_id = $1`,
+      [user_id]
+    );
+  }
 }

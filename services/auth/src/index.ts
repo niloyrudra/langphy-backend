@@ -1,7 +1,7 @@
 import express from "express";
 import "express-async-errors";
 import pkg from 'body-parser';
-import { currentUserRouter } from "./routes/current-user.js";
+// import { currentUserRouter } from "./routes/current-user.js";
 import { signInRouter } from "./routes/signin.js";
 import { signOutRouter } from "./routes/signout.js";
 import { signUpRouter } from "./routes/signup.js";
@@ -18,7 +18,7 @@ const app = express();
 app.use( json() );
 
 app.use( dbRouter );
-app.use( currentUserRouter );
+// app.use( currentUserRouter );
 app.use( signInRouter );
 app.use( signOutRouter );
 app.use( signUpRouter );
@@ -29,14 +29,6 @@ app.use( errorHandler );
 
 const start = async () => {
   const PORT = 3000;
-
-  // try {
-  //   await runMigrations();
-  // }
-  // catch(err) {
-  //   console.error("Migrations failed during the process.", err);
-  // }
-
   try {
     await initProducer();
     console.log("Kafka Auth Producer connected successfully!");

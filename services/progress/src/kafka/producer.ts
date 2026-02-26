@@ -1,5 +1,6 @@
 import { TOPICS, type BaseEvent, type ProgressUpdatedEvent } from "@langphy/shared";
 import { kafka } from "./kafka.client.js";
+import { DeletedUsersRepo } from "src/repos/deleted-users.repo.js";
 
 export let producer: ReturnType<typeof kafka.producer> | null = null;
 
@@ -67,6 +68,7 @@ export const publishEvent = async ( event: BaseEvent ): Promise<void> => {
  */
 export const send = async ( event: {user_id: string} ) => {
     if( !producer ) throw new Error(  "Progress - Kafka producer not initialized");
+    if( await DeletedUsersRepo.exists( event.user_id ) ) return;
 
     await producer.send({
         topic: TOPICS.PROGRESS_UPDATED,

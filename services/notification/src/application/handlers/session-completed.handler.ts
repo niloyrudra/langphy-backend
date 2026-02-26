@@ -4,14 +4,18 @@ import { sendPushNotification } from "../../services/push.service.js";
 import type { Notification } from "../../controllers/notifications.controller.js";
 import { saveNotification } from "../../repos/notifications.repo.js";
 import { emitNotificationCreated } from "../../kafka/producer.js";
+import { DeletedUsersRepo } from "../../repos/deleted-users.repo.js";
 
 export class SessionCompletedHandler implements NotificationEventHandler<SessionCompletedEvent>
 {
-    supports(eventType: string) {
-        return eventType === "session.completed";
-    }
+    // supports(eventType: string) {
+    //     return eventType === "session.completed";
+    // }
 
     async handle(event: SessionCompletedEvent) {
+        if (await DeletedUsersRepo.exists(event.user_id)) {
+            return;
+        }
         const notification = {
             id: crypto.randomUUID(),
             user_id: event.user_id,

@@ -75,4 +75,11 @@ export class NotificationModel {
         );
         return result.rows;
     }
+
+    static async deleteUserNotifications(userId: string) {
+        return await pgPool.query(
+            `DELETE FROM lp_notifications WHERE user_id = $1`,
+            [userId]
+        );
+    }
 }

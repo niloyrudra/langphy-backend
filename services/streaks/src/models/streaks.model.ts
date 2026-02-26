@@ -83,6 +83,21 @@ export class StreakModel {
         }
     }
 
+    // Create streak row
+    static async deleteStreakByUserId(userId: string): Promise<boolean> {
+        try {
+            await pgPool.query(
+                `DELETE FROM lp_streaks WHERE user_id = $1`,
+                [userId]
+            );
+            return true;
+            
+        } catch (error: any) {
+            console.error("deleteStreakByUserId error:", error);
+            return false;
+        }
+    }
+
     // Update streak on daily activity
     static async updateStreak(userId: string): Promise<UserStreak> {
         const result = await pgPool.query(
