@@ -1,6 +1,6 @@
 import type { Response } from "express";
 import type { AuthRequest } from "../middlewares/require-auth.js";
-import { BadRequestError } from "src/errors/bad-request-errors.js";
+import { BadRequestError } from "../errors/bad-request-errors.js";
 
 export const signoutController = (req: AuthRequest, res: Response) => {
     const user = req.user;

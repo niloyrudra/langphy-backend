@@ -1,11 +1,5 @@
 import { Router } from "express";
-// import bcrypt from 'bcrypt';
-// import { pgPool } from "../db/index.js";
-import type { NextFunction, Request, Response } from "express";
-import { body, validationResult } from 'express-validator';
-import { RequestValidationError } from "../errors/request-validation-errors.js";
-// import { DatabaseConnectionErrors } from "../errors/database-connection-errors.js";
-// import { ConflictValidationError } from "../errors/conflict-errors.js";
+import { body } from 'express-validator';
 import { signupController } from "../controllers/signup.controller.js";
 import { validateAuth } from "../middlewares/validate-auth.js";
 

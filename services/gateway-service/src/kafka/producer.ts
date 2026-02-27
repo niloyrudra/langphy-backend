@@ -63,6 +63,9 @@ export const publishEvent = async (event: BaseEvent) => {
 
 const resolveTopic = (eventType: string): string => {
   switch (eventType) {
+    // case "user.entitlement.updated.v1":
+    //   return TOPICS.ENTITLEMENT_UPDATED;
+
     case "lesson.completed.v1":
       return TOPICS.LESSON_COMPLETED;
 

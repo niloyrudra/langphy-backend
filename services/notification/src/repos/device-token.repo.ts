@@ -1,4 +1,4 @@
-import { DeviceTokenModel } from "src/models/device-token.model.js";
+import { DeviceTokenModel } from "../models/device-token.model.js";
 
 export const deleteDeviceToken = async ( user_id: string ) => {
     try {

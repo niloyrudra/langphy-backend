@@ -1,6 +1,6 @@
 import { TOPICS, type BaseEvent, type ProgressUpdatedEvent } from "@langphy/shared";
 import { kafka } from "./kafka.client.js";
-import { DeletedUsersRepo } from "src/repos/deleted-users.repo.js";
+import { DeletedUsersRepo } from "../repos/deleted-users.repo.js";
 
 export let producer: ReturnType<typeof kafka.producer> | null = null;
 

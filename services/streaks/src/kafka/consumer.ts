@@ -4,7 +4,7 @@ import { producer } from "./producer.js";
 import { StreakUpdatedEventSchema, TOPICS } from "@langphy/shared";
 import { EventIndexModel } from "../models/eventIndex.model.js";
 import { StreakRepo } from "../repos/streaks.repo.js";
-import { DeletedUsersRepo } from "src/repos/deleted-users.repo.js";
+import { DeletedUsersRepo } from "../repos/deleted-users.repo.js";
 
 export const consumer = kafka.consumer({
     groupId: process.env.SERVICE_NAME + '-group'

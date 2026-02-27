@@ -1,10 +1,8 @@
 import type { Request, Response } from "express";
-// import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 
 import { UserModel } from "../models/user.model.js";
-import { DatabaseConnectionErrors } from "../errors/database-connection-errors.js";
-// import { ConflictValidationError } from "../errors/conflict-errors.js";
+// import { DatabaseConnectionErrors } from "../errors/database-connection-errors.js";
 import { validationResult } from "express-validator";
 import { RequestValidationError } from "../errors/request-validation-errors.js";
 import { BadRequestError } from "../errors/bad-request-errors.js";
@@ -58,8 +56,6 @@ export const signupController = async ( req: Request, res: Response ) => {
                 email: user.email,
                 created_at: user.created_at,
                 provider: user.provider
-                // username: user.username
-                // updated_at: user.updated_at
             }
         });
     }

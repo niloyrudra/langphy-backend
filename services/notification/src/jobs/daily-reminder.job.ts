@@ -16,20 +16,6 @@ export const startDailyReminderJob = () => {
 
             for (const user of rows) {
                 await emitReminderTriggered( user.user_id );
-                // await producer?.send({
-                //     topic: "reminder.triggered.v1",
-                //     messages: [{
-                //         key: user.user_id,
-                //         value: JSON.stringify({
-                //             event_id: crypto.randomUUID(),
-                //             event_type: "reminder.triggered",
-                //             event_version: 1,
-                //             occurred_at: new Date().toISOString(),
-                //             user_id: user.user_id,
-                //             payload: {}
-                //         })
-                //     }]
-                // });
             }
 
             console.log(`Reminders sent to ${rows.length} users`);
