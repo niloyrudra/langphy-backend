@@ -53,6 +53,12 @@ spec:
                 secretKeyRef:
                   name: performance-secrets
                   key: PG_DB
+            
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: performance-secrets
+                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service

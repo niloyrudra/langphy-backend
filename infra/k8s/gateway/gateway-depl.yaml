@@ -27,6 +27,12 @@ spec:
 
             - name: NODE_ENV
               value: production
+
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service

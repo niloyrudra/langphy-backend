@@ -53,6 +53,12 @@ spec:
                 secretKeyRef:
                   name: streaks-postgres-secrets
                   key: PG_DB
+            
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: streaks-postgres-secrets
+                  key: JWT_KEY
 
             - name: SERVICE_NAME
               value: streaks-service

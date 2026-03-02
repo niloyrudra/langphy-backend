@@ -53,6 +53,12 @@ spec:
                 secretKeyRef:
                   name: achievements-secrets
                   key: PG_DB
+            
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: achievements-secrets
+                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service

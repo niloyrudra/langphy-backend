@@ -16,14 +16,15 @@ export const signinController = async ( req: Request, res: Response ) => {
 
     try {
         const user = await UserModel.findByEmail( email );
-        const isDeleted = await DeletedUsersRepo.exists(user!.id);
-
-        if (isDeleted) {
-            throw new BadRequestError("Account has been deleted.");
-        }
 
         if (!user || !user.password) {
             throw new BadRequestError("Invalid credentials");
+        }
+
+        const isDeleted = await DeletedUsersRepo.exists(user.id);
+
+        if (isDeleted) {
+            throw new BadRequestError("Account has been deleted.");
         }
 
         const passwordMatch = await Password.compare( user.password, password );

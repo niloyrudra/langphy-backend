@@ -60,6 +60,12 @@ spec:
                   name: progress-secrets
                   key: PG_DB
 
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: progress-secrets
+                  key: JWT_KEY
+
           resources:
             limits:
               memory: "512Mi"

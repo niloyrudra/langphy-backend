@@ -27,7 +27,7 @@ export const requireAuth = ( req: AuthRequest, res: Response, next: NextFunction
     try {
         const payload = jwt.verify(
             token,
-            process.env.JWT_SECRET!
+            process.env.JWT_KEY!
         ) as JwtPayload;
 
         req.user = payload;

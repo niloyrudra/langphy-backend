@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { body } from 'express-validator';
 import { validateAuth } from "../middlewares/validate-auth.js";
-import { resetPasswordByEmailController, resetPasswordByUserIdController } from "../controllers/reset-password.controller.js";
+import { resetPasswordByEmailController, resetPasswordController } from "../controllers/reset-password.controller.js";
 import { requireAuth } from "../middlewares/require-auth.js";
 
 const router = Router();
@@ -14,6 +14,7 @@ router.put(
             .isEmail()
             .withMessage('Email must be valid!'),
         body('password')
+            // .notEmpty()
             .trim()
             .isLength({
                 min: 6,
@@ -29,14 +30,17 @@ router.put(
     "/api/users/profile/reset-password",
     requireAuth,
     [
-        // body('user_id')
-        //     .isUUID()
-        //     .withMessage('User Id must be valid!'),
-        body('passwrord')
-            .notEmpty()
+        body('password')
+            // .notEmpty()
+            .trim()
+            .isLength({
+                min: 6,
+                max: 20
+            })
+            .withMessage('Password must be between 6 and 20 characters')
     ],
     validateAuth,
-    resetPasswordByUserIdController
+    resetPasswordController
 );
 
 export { router as resetPasswordByEmailRouter };

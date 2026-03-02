@@ -63,7 +63,7 @@ export const resetPasswordByEmailController = async ( req: AuthRequest, res: Res
     }
 };
 
-export const resetPasswordByUserIdController = async ( req: AuthRequest, res: Response ) => {
+export const resetPasswordController = async ( req: AuthRequest, res: Response ) => {
     const errors = validationResult( req );
     if( ! errors.isEmpty() ) throw new RequestValidationError( errors.array() );
     const user_id = req.user?.id;

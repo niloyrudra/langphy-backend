@@ -59,6 +59,12 @@ spec:
                 secretKeyRef:
                   name: settings-secrets
                   key: PG_DB
+            
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: settings-secrets
+                  key: JWT_KEY
                   
           resources:
             limits:

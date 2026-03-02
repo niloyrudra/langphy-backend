@@ -60,6 +60,12 @@ spec:
                   name: profile-secrets
                   key: PG_DB
 
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: profile-secrets
+                  key: JWT_KEY
+
           resources:
             limits:
               memory: "512Mi"
