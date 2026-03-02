@@ -19,7 +19,7 @@ export const signupController = async ( req: Request, res: Response ) => {
         const existingUser = await UserModel.findByEmail( email );
 
         if( existingUser ) {
-            throw new BadRequestError( "Email in use!", 400 );
+            throw new BadRequestError( "Email in use!" );
         }
 
         const user = await UserModel.create( email, password, "email" );

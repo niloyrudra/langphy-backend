@@ -6,6 +6,7 @@ import { Password } from "../services/password.js";
 import { BadRequestError } from "../errors/bad-request-errors.js";
 import { validationResult } from "express-validator";
 import { RequestValidationError } from "../errors/request-validation-errors.js";
+import { DeletedUsersRepo } from "../repos/deleted-users.repo.js";
 
 export const signinController = async ( req: Request, res: Response ) => {
     const errors = validationResult(req);
@@ -15,6 +16,11 @@ export const signinController = async ( req: Request, res: Response ) => {
 
     try {
         const user = await UserModel.findByEmail( email );
+        const isDeleted = await DeletedUsersRepo.exists(user!.id);
+
+        if (isDeleted) {
+            throw new BadRequestError("Account has been deleted.");
+        }
 
         if (!user || !user.password) {
             throw new BadRequestError("Invalid credentials");
@@ -39,29 +45,11 @@ export const signinController = async ( req: Request, res: Response ) => {
         res.status(200).send({
             message: "Signin successful!",
             user: {...user},
-            // user: {
-            //     id: user.id,
-            //     email: user.email,
-            //     created_at: user.created_at,
-            //     username: user.username,
-            //     first_name: user.first_name,
-            //     last_name: user.last_name
-            // },
             token: userJwt
         });
     }
     catch( err ) {
         console.error( "Signin error: ", err );
-
         throw new DatabaseConnectionErrors();
-
-        // // Preserve app-level errors
-        // if (err instanceof CustomError) {
-        //     throw err;
-        // }
-
-        // // if( err instanceof DatabaseConnectionErrors ) {
-        // throw new DatabaseConnectionErrors();
-        // }
     }
 }
