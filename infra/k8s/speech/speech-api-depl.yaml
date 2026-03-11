@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: speech-api-depl
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: speech-api
@@ -27,7 +27,7 @@ spec:
             - name: REDIS_PORT
               value: "6379"
             - name: WHISPER_MODEL_SIZE
-              value: medium
+              value: small
             - name: WHISPER_DEVICE
               value: cpu
             - name: WHISPER_COMPUTE_TYPE
@@ -42,11 +42,11 @@ spec:
 
           resources:
             requests:
-              cpu: "500m"
-              memory: "2Gi"
+              cpu: "250m"
+              memory: "1Gi"
             limits:
-              cpu: "2000m"
-              memory: "4Gi"
+              cpu: "1000m"
+              memory: "2Gi"
 
           # ── Readiness probe ────────────────────────────────────────────────
           # Kubernetes will NOT route any traffic to this pod until
@@ -55,7 +55,7 @@ spec:
           # This is the critical gate that eliminates the 60-second first request.
           readinessProbe:
             httpGet:
-              path: /health/ready
+              path: /docs #/health/ready
               port: 8001
             initialDelaySeconds: 30   # give load_model() a head start
             periodSeconds: 5
@@ -63,7 +63,7 @@ spec:
 
           livenessProbe:
             httpGet:
-              path: /health/live
+              path: /docs #/health/live
               port: 8001
             initialDelaySeconds: 60
             periodSeconds: 20
