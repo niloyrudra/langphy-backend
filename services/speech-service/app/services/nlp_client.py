@@ -23,8 +23,8 @@ async def evaluate_text(expected: str, spoken: str):
             response = await client.post(
                 f"{NLP_SERVICE_URL}/api/nlp/analyze/evaluate-speaking",
                 json={
-                    "expected_text": expected_clean,   # ⚠️ correct field name
-                    "spoken_text": spoken_clean        # ⚠️ correct field name
+                    "expected_text": expected_clean,
+                    "spoken_text": spoken_clean
                 },
                 timeout=30
             )

@@ -1,9 +1,10 @@
-import cron from "node-cron";
+// import cron from "node-cron";
+import { schedule } from "node-cron";
 import { pgPool } from "../db/index.js";
 import { emitReminderTriggered } from "../kafka/producer.js";
 
 export const startDailyReminderJob = () => {
-    cron.schedule("0 19 * * *", async () => {
+    schedule("0 19 * * *", async () => {
         console.log("Running daily reminder job...");
 
         try {

@@ -26,4 +26,6 @@ npm run build -w services/streaks -c
 
 ## services/<SERVICE>/package.json >> scripts->build "tsc -b && cpx src/db/migrations/**/* dist/db/migrations" | To create the migrations folder in dist/db directory
 
+## nlp-service and speech-service are Python services built and managed exclusively via skaffold / Docker, not via npm
+
 

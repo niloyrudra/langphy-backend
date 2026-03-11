@@ -1,21 +1,22 @@
-apiVersion: skaffold/v2alpha3
+apiVersion: skaffold/v4beta11
 kind: Config
-deploy:
-  kubectl:
-    manifests:
-      - infra/k8s/*
+
+# ──────────────────────────────────────────────
+# BUILD
+# ──────────────────────────────────────────────
 build:
   local:
     push: false
   artifacts:
+    # ── Node.js services (built from monorepo root) ──
     - image: niloyrudra/gateway-service
       context: .
       docker:
         dockerfile: services/gateway-service/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
+          - src: "services/gateway-service/src/**/*.ts"
+            dest: .
 
     - image: niloyrudra/auth
       context: .
@@ -23,218 +24,488 @@ build:
         dockerfile: services/auth/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/auth/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/achievements
       context: .
       docker:
         dockerfile: services/achievements/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/achievements/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/streaks
       context: .
       docker:
         dockerfile: services/streaks/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/streaks/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/progress
       context: .
       docker:
         dockerfile: services/progress/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/progress/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/performance
       context: .
       docker:
         dockerfile: services/performance/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/performance/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/profile
       context: .
       docker:
         dockerfile: services/profile/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/profile/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/settings
       context: .
       docker:
         dockerfile: services/settings/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-            
+          - src: "services/settings/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/category
       context: .
       docker:
         dockerfile: services/category/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/category/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/unit
       context: .
       docker:
         dockerfile: services/unit/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/unit/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/practice
       context: .
       docker:
         dockerfile: services/practice/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/practice/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/quiz
       context: .
       docker:
         dockerfile: services/quiz/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/quiz/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/speaking
       context: .
       docker:
         dockerfile: services/speaking/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/speaking/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/reading
       context: .
       docker:
         dockerfile: services/reading/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/reading/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/listening
       context: .
       docker:
         dockerfile: services/listening/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/listening/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/writing
       context: .
       docker:
         dockerfile: services/writing/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-    
+          - src: "services/writing/src/**/*.ts"
+            dest: .
+
     - image: niloyrudra/notification
       context: .
       docker:
         dockerfile: services/notification/Dockerfile
       sync:
         manual:
-          - dest: .
-            src: 'src/**/*.ts'
-            
+          - src: "services/notification/src/**/*.ts"
+            dest: .
+
+    # ── Python services (self-contained build contexts) ──
     - image: niloyrudra/nlp-service
       context: services/nlp-service
       docker:
         dockerfile: Dockerfile
-            
+
     - image: niloyrudra/speech-service
       context: services/speech-service
       docker:
         dockerfile: Dockerfile
 
-profiles:
-  - name: db
-    deploy:
-      kubectl:
-        manifests:
-          - infra/k8s/gateway/gateway-postgres-pvc.yaml
-          - infra/k8s/gateway/gateway-postgres-depl.yaml
-          - infra/k8s/notification/notification-postgres-pvc.yaml
-          - infra/k8s/notification/notification-postgres-depl.yaml
-          - infra/k8s/auth/auth-postgres-pvc.yaml
-          - infra/k8s/auth/auth-postgres-depl.yaml
-          - infra/k8s/streaks/streaks-postgres-pvc.yaml
-          - infra/k8s/streaks/streaks-postgres-depl.yaml
-          - infra/k8s/progress/progress-postgres-pvc.yaml
-          - infra/k8s/progress/progress-postgres-depl.yaml
-          - infra/k8s/performance/performance-postgres-pvc.yaml
-          - infra/k8s/performance/performance-postgres-depl.yaml
-          - infra/k8s/profile/profile-postgres-pvc.yaml
-          - infra/k8s/profile/profile-postgres-depl.yaml
-          - infra/k8s/settings/settings-postgres-pvc.yaml
-          - infra/k8s/settings/settings-postgres-depl.yaml
-          - infra/k8s/achievements/achievements-postgres-pvc.yaml
-          - infra/k8s/achievements/achievements-postgres-depl.yaml
-          - infra/k8s/auth/auth-secrets.yaml
-          - infra/k8s/streaks/streaks-postgres-secrets.yaml
-          - infra/k8s/progress/progress-secrets.yaml
-          - infra/k8s/performance/performance-secrets.yaml
-          - infra/k8s/mongo-secrets.yaml
-          - infra/k8s/category/category-mongo-secrets.yaml
-          - infra/k8s/unit/unit-mongo-secrets.yaml
-          - infra/k8s/practice/practice-mongo-secrets.yaml
-          - infra/k8s/quiz/quiz-mongo-secrets.yaml
-          - infra/k8s/reading/reading-mongo-secrets.yaml
-          - infra/k8s/listening/listening-mongo-secrets.yaml
-          - infra/k8s/speaking/speaking-mongo-secrets.yaml
-          - infra/k8s/writing/writing-mongo-secrets.yaml
+# ──────────────────────────────────────────────
+# MANIFESTS  (default — deploys everything)
+# ──────────────────────────────────────────────
+manifests:
+  rawYaml:
+    - infra/k8s/**
 
-  - name: apps
+# ──────────────────────────────────────────────
+# DEPLOY
+# ──────────────────────────────────────────────
+deploy:
+  kubectl: {}
+
+# ──────────────────────────────────────────────
+# PROFILES
+# ──────────────────────────────────────────────
+profiles:
+  # ── db: databases, PVCs, and secrets only ──
+  - name: db
+    manifests:
+      rawYaml:
+        # Postgres — PVCs
+        - infra/k8s/gateway/gateway-postgres-pvc.yaml
+        - infra/k8s/notification/notification-postgres-pvc.yaml
+        - infra/k8s/auth/auth-postgres-pvc.yaml
+        - infra/k8s/streaks/streaks-postgres-pvc.yaml
+        - infra/k8s/progress/progress-postgres-pvc.yaml
+        - infra/k8s/performance/performance-postgres-pvc.yaml
+        - infra/k8s/profile/profile-postgres-pvc.yaml
+        - infra/k8s/settings/settings-postgres-pvc.yaml
+        - infra/k8s/achievements/achievements-postgres-pvc.yaml
+        # Postgres — deployments
+        - infra/k8s/gateway/gateway-postgres-depl.yaml
+        - infra/k8s/notification/notification-postgres-depl.yaml
+        - infra/k8s/auth/auth-postgres-depl.yaml
+        - infra/k8s/streaks/streaks-postgres-depl.yaml
+        - infra/k8s/progress/progress-postgres-depl.yaml
+        - infra/k8s/performance/performance-postgres-depl.yaml
+        - infra/k8s/profile/profile-postgres-depl.yaml
+        - infra/k8s/settings/settings-postgres-depl.yaml
+        - infra/k8s/achievements/achievements-postgres-depl.yaml
+        # Secrets
+        - infra/k8s/auth/auth-secrets.yaml
+        - infra/k8s/streaks/streaks-postgres-secrets.yaml
+        - infra/k8s/progress/progress-secrets.yaml
+        - infra/k8s/performance/performance-secrets.yaml
+        - infra/k8s/mongo-secrets.yaml
+        - infra/k8s/category/category-mongo-secrets.yaml
+        - infra/k8s/unit/unit-mongo-secrets.yaml
+        - infra/k8s/practice/practice-mongo-secrets.yaml
+        - infra/k8s/quiz/quiz-mongo-secrets.yaml
+        - infra/k8s/reading/reading-mongo-secrets.yaml
+        - infra/k8s/listening/listening-mongo-secrets.yaml
+        - infra/k8s/speaking/speaking-mongo-secrets.yaml
+        - infra/k8s/writing/writing-mongo-secrets.yaml
     deploy:
-      kubectl:
-        manifests:
-          - infra/k8s/gateway/gateway-depl.yaml
-          - infra/k8s/notification/notification-depl.yaml
-          - infra/k8s/auth/auth-depl.yaml
-          - infra/k8s/profile/profile-depl.yaml
-          - infra/k8s/settings/settings-depl.yaml
-          - infra/k8s/achievements/achievements-depl.yaml
-          - infra/k8s/streaks/streaks-depl.yaml
-          - infra/k8s/progress/progress-depl.yaml
-          - infra/k8s/performance/performance-depl.yaml
-          - infra/k8s/category/category-depl.yaml
-          - infra/k8s/unit/unit-depl.yaml
-          - infra/k8s/practice/practice-depl.yaml
-          - infra/k8s/quiz/quiz-depl.yaml
-          - infra/k8s/speaking/speaking-depl.yaml
-          - infra/k8s/reading/reading-depl.yaml
-          - infra/k8s/listening/listening-depl.yaml
-          - infra/k8s/writing/writing-depl.yaml
-          - infra/k8s/nlp/nlp-depl.yaml
-          # - infra/k8s/speech/speech-depl.yaml
-          - infra/k8s/speech/speech-api-depl.yaml
-          - infra/k8s/speech/speech-worker-depl.yaml
-          - infra/k8s/speech/redis-depl.yaml
-          - infra/k8s/kafka/kafka-depl.yaml
-          - infra/k8s/kafka/kafka-topic-init.yaml
-          - infra/k8s/kafka/zookeeper-depl.yaml
-          - infra/k8s/ingress/ingress-srv.yaml
+      kubectl: {}
+
+  # ── apps: all application services, infra, and ingress ──
+  - name: apps
+    manifests:
+      rawYaml:
+        # Core services
+        - infra/k8s/gateway/gateway-depl.yaml
+        - infra/k8s/auth/auth-depl.yaml
+        - infra/k8s/notification/notification-depl.yaml
+        - infra/k8s/profile/profile-depl.yaml
+        - infra/k8s/settings/settings-depl.yaml
+        - infra/k8s/achievements/achievements-depl.yaml
+        - infra/k8s/streaks/streaks-depl.yaml
+        - infra/k8s/progress/progress-depl.yaml
+        - infra/k8s/performance/performance-depl.yaml
+        # Content services
+        - infra/k8s/category/category-depl.yaml
+        - infra/k8s/unit/unit-depl.yaml
+        - infra/k8s/practice/practice-depl.yaml
+        - infra/k8s/quiz/quiz-depl.yaml
+        - infra/k8s/speaking/speaking-depl.yaml
+        - infra/k8s/reading/reading-depl.yaml
+        - infra/k8s/listening/listening-depl.yaml
+        - infra/k8s/writing/writing-depl.yaml
+        # AI/ML services
+        - infra/k8s/nlp/nlp-depl.yaml
+        - infra/k8s/speech/speech-api-depl.yaml
+        - infra/k8s/speech/speech-worker-depl.yaml
+        - infra/k8s/speech/redis-depl.yaml
+        # - infra/k8s/speech/speech-depl.yaml  # kept commented — monolithic speech deploy replaced by api+worker above
+        # Messaging
+        - infra/k8s/kafka/kafka-depl.yaml
+        - infra/k8s/kafka/kafka-topic-init.yaml
+        - infra/k8s/kafka/zookeeper-depl.yaml
+        # Ingress
+        - infra/k8s/ingress/ingress-srv.yaml
+    deploy:
+      kubectl: {}
+
+# apiVersion: skaffold/v2alpha3
+# kind: Config
+# deploy:
+#   kubectl:
+#     manifests:
+#       - infra/k8s/*
+# build:
+#   local:
+#     push: false
+#   artifacts:
+#     - image: niloyrudra/gateway-service
+#       context: .
+#       docker:
+#         dockerfile: services/gateway-service/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+
+#     - image: niloyrudra/auth
+#       context: .
+#       docker:
+#         dockerfile: services/auth/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/achievements
+#       context: .
+#       docker:
+#         dockerfile: services/achievements/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/streaks
+#       context: .
+#       docker:
+#         dockerfile: services/streaks/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/progress
+#       context: .
+#       docker:
+#         dockerfile: services/progress/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/performance
+#       context: .
+#       docker:
+#         dockerfile: services/performance/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/profile
+#       context: .
+#       docker:
+#         dockerfile: services/profile/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/settings
+#       context: .
+#       docker:
+#         dockerfile: services/settings/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+            
+#     - image: niloyrudra/category
+#       context: .
+#       docker:
+#         dockerfile: services/category/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/unit
+#       context: .
+#       docker:
+#         dockerfile: services/unit/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/practice
+#       context: .
+#       docker:
+#         dockerfile: services/practice/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/quiz
+#       context: .
+#       docker:
+#         dockerfile: services/quiz/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/speaking
+#       context: .
+#       docker:
+#         dockerfile: services/speaking/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/reading
+#       context: .
+#       docker:
+#         dockerfile: services/reading/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/listening
+#       context: .
+#       docker:
+#         dockerfile: services/listening/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/writing
+#       context: .
+#       docker:
+#         dockerfile: services/writing/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+    
+#     - image: niloyrudra/notification
+#       context: .
+#       docker:
+#         dockerfile: services/notification/Dockerfile
+#       sync:
+#         manual:
+#           - dest: .
+#             src: 'src/**/*.ts'
+            
+#     - image: niloyrudra/nlp-service
+#       context: services/nlp-service
+#       docker:
+#         dockerfile: Dockerfile
+            
+#     - image: niloyrudra/speech-service
+#       context: services/speech-service
+#       docker:
+#         dockerfile: Dockerfile
+
+# profiles:
+#   - name: db
+#     deploy:
+#       kubectl:
+#         manifests:
+#           - infra/k8s/gateway/gateway-postgres-pvc.yaml
+#           - infra/k8s/gateway/gateway-postgres-depl.yaml
+#           - infra/k8s/notification/notification-postgres-pvc.yaml
+#           - infra/k8s/notification/notification-postgres-depl.yaml
+#           - infra/k8s/auth/auth-postgres-pvc.yaml
+#           - infra/k8s/auth/auth-postgres-depl.yaml
+#           - infra/k8s/streaks/streaks-postgres-pvc.yaml
+#           - infra/k8s/streaks/streaks-postgres-depl.yaml
+#           - infra/k8s/progress/progress-postgres-pvc.yaml
+#           - infra/k8s/progress/progress-postgres-depl.yaml
+#           - infra/k8s/performance/performance-postgres-pvc.yaml
+#           - infra/k8s/performance/performance-postgres-depl.yaml
+#           - infra/k8s/profile/profile-postgres-pvc.yaml
+#           - infra/k8s/profile/profile-postgres-depl.yaml
+#           - infra/k8s/settings/settings-postgres-pvc.yaml
+#           - infra/k8s/settings/settings-postgres-depl.yaml
+#           - infra/k8s/achievements/achievements-postgres-pvc.yaml
+#           - infra/k8s/achievements/achievements-postgres-depl.yaml
+#           - infra/k8s/auth/auth-secrets.yaml
+#           - infra/k8s/streaks/streaks-postgres-secrets.yaml
+#           - infra/k8s/progress/progress-secrets.yaml
+#           - infra/k8s/performance/performance-secrets.yaml
+#           - infra/k8s/mongo-secrets.yaml
+#           - infra/k8s/category/category-mongo-secrets.yaml
+#           - infra/k8s/unit/unit-mongo-secrets.yaml
+#           - infra/k8s/practice/practice-mongo-secrets.yaml
+#           - infra/k8s/quiz/quiz-mongo-secrets.yaml
+#           - infra/k8s/reading/reading-mongo-secrets.yaml
+#           - infra/k8s/listening/listening-mongo-secrets.yaml
+#           - infra/k8s/speaking/speaking-mongo-secrets.yaml
+#           - infra/k8s/writing/writing-mongo-secrets.yaml
+
+#   - name: apps
+#     deploy:
+#       kubectl:
+#         manifests:
+#           - infra/k8s/gateway/gateway-depl.yaml
+#           - infra/k8s/notification/notification-depl.yaml
+#           - infra/k8s/auth/auth-depl.yaml
+#           - infra/k8s/profile/profile-depl.yaml
+#           - infra/k8s/settings/settings-depl.yaml
+#           - infra/k8s/achievements/achievements-depl.yaml
+#           - infra/k8s/streaks/streaks-depl.yaml
+#           - infra/k8s/progress/progress-depl.yaml
+#           - infra/k8s/performance/performance-depl.yaml
+#           - infra/k8s/category/category-depl.yaml
+#           - infra/k8s/unit/unit-depl.yaml
+#           - infra/k8s/practice/practice-depl.yaml
+#           - infra/k8s/quiz/quiz-depl.yaml
+#           - infra/k8s/speaking/speaking-depl.yaml
+#           - infra/k8s/reading/reading-depl.yaml
+#           - infra/k8s/listening/listening-depl.yaml
+#           - infra/k8s/writing/writing-depl.yaml
+#           - infra/k8s/nlp/nlp-depl.yaml
+#           # - infra/k8s/speech/speech-depl.yaml
+#           - infra/k8s/speech/speech-api-depl.yaml
+#           - infra/k8s/speech/speech-worker-depl.yaml
+#           - infra/k8s/speech/redis-depl.yaml
+#           - infra/k8s/kafka/kafka-depl.yaml
+#           - infra/k8s/kafka/kafka-topic-init.yaml
+#           - infra/k8s/kafka/zookeeper-depl.yaml
+#           - infra/k8s/ingress/ingress-srv.yaml

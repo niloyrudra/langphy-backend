@@ -4,6 +4,7 @@ import os
 import unicodedata
 from redis import Redis
 from rq import Queue
+import app.state as state
 
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 
@@ -89,3 +90,27 @@ async def get_result(job_id: str):
     print("Returning job:", job)
 
     return job
+
+
+# ── Health endpoints ───────────────────────────────────────────────────────────
+
+@router.get("/health/live", tags=["Health"])
+def liveness():
+    """
+    Kubernetes livenessProbe target.
+    Returns 200 as long as the process is running.
+    No model check – if the process is alive, it is live.
+    """
+    return {"status": "alive"}
+
+
+@router.get("/health/ready", tags=["Health"])
+def readiness():
+    """
+    Kubernetes readinessProbe target.
+    Returns 200 only after load_model() has completed.
+    Kubernetes will not route traffic here until this endpoint succeeds.
+    """
+    if not state.is_ready(): # _ready:
+        raise HTTPException(status_code=503, detail="Model not yet loaded")
+    return {"status": "ready"}

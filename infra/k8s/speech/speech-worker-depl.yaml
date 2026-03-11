@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: speech-worker-depl
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: speech-worker
@@ -32,6 +32,23 @@ spec:
               value: "6379"
             - name: NLP_SERVICE_URL
               value: http://nlp-srv:8000
+            
+            # Model config – must match what was baked into the image.
+            # Override here if you deploy a different model size.
+            - name: WHISPER_MODEL_SIZE
+              value: small
+            - name: WHISPER_DEVICE
+              value: cpu
+            - name: WHISPER_COMPUTE_TYPE
+              value: int8
+            - name: WHISPER_NUM_WORKERS
+              value: "2"
+
+            # HF_HOME must match the PVC mountPath so the baked weights
+            # are found on disk (and the PVC acts as a warm backup if the
+            # image layer is somehow missing).
+            - name: HF_HOME
+              value: /root/.cache/huggingface
 
           resources:
             requests:
@@ -44,7 +61,38 @@ spec:
           volumeMounts:
             - name: audio-storage
               mountPath: /tmp
+
+            - name: model-cache
+              mountPath: /root/.cache/huggingface
+
+          # ── Readiness probe ────────────────────────────────────────────────
+          # RQ workers don't expose HTTP, so we use a simple process check.
+          # The worker is "ready" once rq worker is in the process list.
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "pgrep -f 'rq worker' > /dev/null"
+            initialDelaySeconds: 45   # give load_model() time to finish
+            periodSeconds: 10
+            failureThreshold: 3
+
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "pgrep -f 'rq worker' > /dev/null"
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            failureThreshold: 3
+
       volumes:
         - name: audio-storage
           persistentVolumeClaim:
             claimName: audio-pvc
+        
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: whisper-model-cache-pvc
