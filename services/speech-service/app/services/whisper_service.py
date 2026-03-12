@@ -56,7 +56,13 @@ class WhisperService:
             word_timestamps=True,
             beam_size=1,    # fast; increase to 5 for higher accuracy
             best_of=1,
-            vad_filter=True,
+            vad_filter=False,    # ← disable — doubles peak RAM, not needed for clean recordings
+            # vad_filter=True,
+            # vad_parameters={
+            #     "min_silence_duration_ms": 300,  # default is 2000ms — way too aggressive
+            #     "speech_pad_ms": 400,            # pad detected speech 400ms on each side
+            #     "threshold": 0.3,               # default 0.5 — lower = more sensitive
+            # },
         )
 
         result_segments = []

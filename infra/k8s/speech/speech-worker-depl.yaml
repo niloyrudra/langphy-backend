@@ -20,11 +20,11 @@ spec:
         - name: speech-worker
           image: niloyrudra/speech-service
           imagePullPolicy: IfNotPresent
-          # command: ["python"]
-          # args: ["app/worker.py"]
+          command: ["python"]
+          args: ["app/worker.py"]
           # command: ["python", "-m", "rq", "worker", "speech"]
-          command: ["rq"]
-          args: ["worker", "speech"]
+          # command: ["rq"]
+          # args: ["worker", "speech"]
           env:
             - name: REDIS_HOST
               value: redis
@@ -42,7 +42,7 @@ spec:
             - name: WHISPER_COMPUTE_TYPE
               value: int8
             - name: WHISPER_NUM_WORKERS
-              value: "2"
+              value: "1"
 
             # HF_HOME must match the PVC mountPath so the baked weights
             # are found on disk (and the PVC acts as a warm backup if the
@@ -56,7 +56,7 @@ spec:
               memory: "1Gi"
             limits:
               cpu: "2000m"
-              memory: "3Gi"
+              memory: "4Gi"
           
           volumeMounts:
             - name: audio-storage
@@ -73,7 +73,7 @@ spec:
               command:
                 - sh
                 - -c
-                - "pgrep -f 'rq worker' > /dev/null"
+                - "pgrep -f 'app/worker.py' > /dev/null" #"pgrep -f 'rq worker' > /dev/null"
             initialDelaySeconds: 45   # give load_model() time to finish
             periodSeconds: 10
             failureThreshold: 3
@@ -83,7 +83,7 @@ spec:
               command:
                 - sh
                 - -c
-                - "pgrep -f 'rq worker' > /dev/null"
+                - "pgrep -f 'app/worker.py' > /dev/null" #"pgrep -f 'rq worker' > /dev/null"
             initialDelaySeconds: 60
             periodSeconds: 20
             failureThreshold: 3

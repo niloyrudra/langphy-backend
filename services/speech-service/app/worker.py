@@ -1,3 +1,78 @@
+import logging
+import os
+
+import redis
+from rq import Queue
+from rq.worker import SimpleWorker
+from rq.job import Job
+from rq.timeouts import JobTimeoutException
+
+from app.model import load_model
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s  %(levelname)-8s  %(name)s  %(message)s",
+)
+logger = logging.getLogger(__name__)
+
+REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+QUEUE_NAME = "speech"
+
+
+def _get_redis() -> redis.Redis:
+    return redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
+
+
+class NoSigalrmWorker(SimpleWorker):
+    """
+    SimpleWorker (no fork) with SIGALRM death penalty disabled.
+
+    WHY:
+    SimpleWorker correctly runs jobs in-process without forking.
+    However perform_job() wraps the job call in `self.death_penalty_class`
+    which uses SIGALRM to enforce timeouts. SIGALRM interrupts CTranslate2's
+    internal C++ thread synchronisation, causing Whisper to deadlock silently.
+
+    Direct exec of WhisperModel.transcribe() in the pod completes fine —
+    confirming CTranslate2 itself works. The SIGALRM signal is the trigger.
+
+    Fix: replace death_penalty_class with a no-op context manager so the
+    job runs uninterrupted. We rely on job_timeout=120 in speech.py as a
+    soft timeout via RQ's own job registry instead.
+    """
+
+    class _NoOpTimeout:
+        """Drop-in replacement for death_penalty_class that does nothing."""
+        def __init__(self, *args, **kwargs):
+            pass
+        def __enter__(self):
+            return self
+        def __exit__(self, *args):
+            return False
+        def cancel(self):
+            pass
+
+    death_penalty_class = _NoOpTimeout
+
+
+def boot_worker():
+    logger.info("=== Speech worker starting: warming Whisper model before accepting jobs ===")
+    load_model()
+    logger.info("=== Model warm. Connecting to Redis at %s:%s ===", REDIS_HOST, REDIS_PORT)
+
+    conn = _get_redis()
+    queues = [Queue(QUEUE_NAME, connection=conn)]
+    worker = NoSigalrmWorker(queues, connection=conn)
+    worker.work(with_scheduler=False)
+
+
+if __name__ == "__main__":
+    boot_worker()
+
+
+
+
 """
 app/worker.py
 
@@ -26,53 +101,54 @@ Set the RQ_WORKER_INIT env var to trigger the hook path.
 Either way, load_model() is idempotent – calling it twice is safe.
 """
 
-import logging
-import os
-import sys
+# import logging
+# import os
+# import sys
 
-import redis
-from rq import Worker, Queue
+# import redis
+# from rq import Worker, Queue
 
-from app.model import load_model
+# from app.model import load_model
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s  %(levelname)-8s  %(name)s  %(message)s",
-)
-logger = logging.getLogger(__name__)
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format="%(asctime)s  %(levelname)-8s  %(name)s  %(message)s",
+# )
+# logger = logging.getLogger(__name__)
 
-REDIS_HOST = os.getenv("REDIS_HOST", "redis")
-REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
-QUEUE_NAME = "speech"
-
-
-def _get_redis() -> redis.Redis:
-    return redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
+# REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+# REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+# QUEUE_NAME = "speech"
 
 
-def boot_worker():
-    """
-    1. Load + warm the Whisper model  (eliminates 60s cold-start on first job)
-    2. Start the RQ Worker loop
-
-    Uses the modern RQ API (>=1.16): Connection context manager was removed;
-    pass the Redis connection directly to Worker() instead.
-    """
-    logger.info("=== Speech worker starting: warming Whisper model before accepting jobs ===")
-    load_model()
-    logger.info("=== Model warm. Connecting to Redis at %s:%s ===", REDIS_HOST, REDIS_PORT)
-
-    conn = _get_redis()
-
-    # Modern API: no `with Connection(conn)` wrapper needed.
-    # Pass conn directly to both Queue and Worker.
-    queues = [Queue(QUEUE_NAME, connection=conn)]
-    worker = Worker(queues, connection=conn)
-    worker.work(with_scheduler=False)
+# def _get_redis() -> redis.Redis:
+#     return redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 
 
-if __name__ == "__main__":
-    boot_worker()
+# def boot_worker():
+#     """
+#     1. Load + warm the Whisper model  (eliminates 60s cold-start on first job)
+#     2. Start the RQ Worker loop
+
+#     Uses the modern RQ API (>=1.16): Connection context manager was removed;
+#     pass the Redis connection directly to Worker() instead.
+#     """
+#     logger.info("=== Speech worker starting: warming Whisper model before accepting jobs ===")
+#     load_model()
+#     logger.info("=== Model warm. Connecting to Redis at %s:%s ===", REDIS_HOST, REDIS_PORT)
+
+#     conn = _get_redis()
+
+#     # Modern API: no `with Connection(conn)` wrapper needed.
+#     # Pass conn directly to both Queue and Worker.
+#     queues = [Queue(QUEUE_NAME, connection=conn)]
+#     worker = Worker(queues, connection=conn)
+#     worker.work(with_scheduler=False)
+#     # worker.work(with_scheduler=False, fork_job_execution=False)
+
+
+# if __name__ == "__main__":
+#     boot_worker()
 
 
 # def warmup_hook():

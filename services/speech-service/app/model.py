@@ -88,7 +88,10 @@ def load_model() -> WhisperModel:
         compute_type=COMPUTE_TYPE,
         num_workers=NUM_WORKERS,
         download_root=MODEL_CACHE_DIR,
-        # cpu_threads: leave at 0 (auto) unless you need to cap CPU usage
+        # cpu_threads=2, # cpu_threads: leave at 0 (auto) unless you need to cap CPU usage
+        # inter_op_threads=1,
+        # intra_threads=2,
+        # inter_threads=1,
     )
 
     t1 = time.perf_counter()

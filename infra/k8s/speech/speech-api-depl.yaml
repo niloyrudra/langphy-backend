@@ -33,7 +33,7 @@ spec:
             - name: WHISPER_COMPUTE_TYPE
               value: int8
             - name: WHISPER_NUM_WORKERS
-              value: "2"
+              value: "1"
             - name: HF_HOME
               value: /root/.cache/huggingface
 
