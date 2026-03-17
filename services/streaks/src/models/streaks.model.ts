@@ -122,10 +122,41 @@ export class StreakModel {
                 last_activity_date = CURRENT_DATE,
                 updated_at = now()
             WHERE user_id = $1
-            RETURNING *;
+            RETURNING
+                user_id,
+                current_streak,
+                longest_streak,
+                EXTRACT(EPOCH FROM last_activity_date::timestamptz)::bigint AS last_activity_date,
+                updated_at;
             `,
             [userId]
         );
+        // const result = await pgPool.query(
+        //     `
+        //     UPDATE lp_streaks
+        //     SET
+        //         current_streak = CASE
+        //             WHEN last_activity_date = CURRENT_DATE - INTERVAL '1 day'
+        //                 THEN current_streak + 1
+        //             WHEN last_activity_date = CURRENT_DATE
+        //                 THEN current_streak
+        //             ELSE 1
+        //         END,
+        //         longest_streak = GREATEST(
+        //             longest_streak,
+        //             CASE
+        //                 WHEN last_activity_date = CURRENT_DATE - INTERVAL '1 day'
+        //                     THEN current_streak + 1
+        //                 ELSE 1
+        //             END
+        //         ),
+        //         last_activity_date = CURRENT_DATE,
+        //         updated_at = now()
+        //     WHERE user_id = $1
+        //     RETURNING *;
+        //     `,
+        //     [userId]
+        // );
 
         if (!result.rows[0]) {
             throw new Error("Streak not found");
