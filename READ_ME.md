@@ -28,4 +28,6 @@ npm run build -w services/streaks -c
 
 ## nlp-service and speech-service are Python services built and managed exclusively via skaffold / Docker, not via npm
 
+# Ingress Nginx -> Kubernetes
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.2/deploy/static/provider/cloud/deploy.yaml
 

@@ -21,12 +21,10 @@ const waitForDb = async (retries = 10) => {
 };
 
 export const runMigrations = async () => {
+  await waitForDb();
   const client = await pgPool.connect();
 
   try {
-
-    await waitForDb();
-
     await client.query(`
       CREATE TABLE IF NOT EXISTS schema_migrations (
         filename TEXT PRIMARY KEY,
@@ -68,3 +66,16 @@ export const runMigrations = async () => {
     client.release();
   }
 };
+
+// ── Run when executed directly ─────────────────────────────────────────
+// This block runs when called via: node dist/db/migrate.js
+// It does NOT run when imported by index.ts
+runMigrations()
+  .then(() => {
+    console.log("✅ Migrations complete");
+    process.exit(0);
+  })
+  .catch((err) => {
+    console.error("❌ Migration failed:", err);
+    process.exit(1);
+  });
