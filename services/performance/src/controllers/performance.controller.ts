@@ -10,9 +10,9 @@ export const updatePerformanceController = async ( req: AuthRequest, res: Respon
     if (!errors.isEmpty()) {
         throw new RequestValidationError(errors.array());
     }
+    const userId = req.user?.id;
+    if(!userId) throw new BadRequestError("User ID is required");
     try {
-        const userId = req.user?.id;
-        if(!userId) throw new BadRequestError("User ID is required");
         const user_id = typeof userId === 'string' ? userId : "";
         const data = await PerformanceModel.getSummary( user_id );
     

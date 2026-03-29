@@ -11,7 +11,7 @@ $$;
 
 CREATE TABLE IF NOT EXISTS lp_achievements (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    code TEXT UNIQUE NOT NULL,
+    icon TEXT UNIQUE NOT NULL,
     title TEXT NOT NULL,
     description TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT now()

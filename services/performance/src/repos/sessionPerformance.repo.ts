@@ -3,12 +3,13 @@ import { pgPool } from "../db/index.js"
 interface SessionPerformanceInput {
     userId: string;
     unitId: string;
-    sessionType: string;
     sessionKey: string;
+    sessionType: string;
     score: number;
-    accuracy: number;
-    totalDurationMs: number;
-    completedAt: string | number;
+    // accuracy: number;
+    attempts?: number;
+    total_duration_ms: number;
+    completed_at: string | number;
 }
 
 export class SessionPerformanceRepo {
@@ -22,19 +23,20 @@ export class SessionPerformanceRepo {
                     session_type,
                     session_key,
                     score,
-                    accuracy,
+                    attempts,
                     total_duration_ms,
                     completed_at
                 )
                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
-                ON CONFLICT (user_id, unit_id, session_type)
+                ON CONFLICT (user_id, session_key, session_type)
                 DO UPDATE SET
                     session_key = EXCLUDED.session_key,
+                    session_type = EXCLUDED.session_type,
                     score = EXCLUDED.score,
-                    accuracy = EXCLUDED.accuracy,
+                    attempts = EXCLUDED.attempts,
                     total_duration_ms = EXCLUDED.total_duration_ms,
                     completed_at = EXCLUDED.completed_at,
-                    updated_at = now();
+                    updated_at = now()
                 RETURNING 1
                 `,
                 [
@@ -43,9 +45,9 @@ export class SessionPerformanceRepo {
                     input.sessionType,
                     input.sessionKey,
                     input.score,
-                    input.accuracy,
-                    input.totalDurationMs,
-                    input.completedAt
+                    input.attempts,
+                    input.total_duration_ms,
+                    input.completed_at
                 ]
             );
             return result.rows[0] ?? null;
@@ -63,8 +65,8 @@ export class SessionPerformanceRepo {
                 SELECT *
                 FROM lp_session_performance
                 WHERE user_id = $1
-                    AND unit_id = $2;
-                    AND session_type = $3;
+                    AND unit_id = $2
+                    AND session_type = $3
                 `,
                 [
                     user_id,

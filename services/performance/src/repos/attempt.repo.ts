@@ -6,9 +6,9 @@ interface SessionAttemptInput {
     sessionType: string;
     sessionKey: string;
     score: number;
-    accuracy: number;
-    totalDurationMs: number;
-    occurredAt: string | number;
+    attempts: number;
+    total_duration_ms: number;
+    completed_at: string | number;
 }
 
 export class SessionAttemptRepo {
@@ -23,7 +23,7 @@ export class SessionAttemptRepo {
                     session_type,
                     session_key,
                     score,
-                    accuracy,
+                    attempts,
                     total_duration_ms,
                     occurred_at,
                     created_at
@@ -37,9 +37,9 @@ export class SessionAttemptRepo {
                     input.sessionType,
                     input.sessionKey,
                     input.score,
-                    input.accuracy,
-                    input.totalDurationMs,
-                    input.occurredAt,
+                    input.attempts,
+                    input.total_duration_ms,
+                    input.completed_at,
                     now
                 ]
             );

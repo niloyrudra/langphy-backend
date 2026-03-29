@@ -17,8 +17,9 @@ export const PerformanceUpdatedEventSchema = BaseEventSchema.extend({
         session_key: z.string(),
         total_duration_ms: z.number(),
         score: z.number().optional(),
-        accuracy: z.number().optional(),
-        occurred_at: z.number(),
+        // accuracy: z.number().optional(),
+        attempts: z.number(),
+        completed_at: z.number(),
     }),
 });
 

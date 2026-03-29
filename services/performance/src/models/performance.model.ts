@@ -13,7 +13,7 @@ export class PerformanceModel {
     static async upsertUser(userId: string) {
         await pgPool.query(
             `
-            INSERT INTO user_performance (user_id)
+            INSERT INTO lp_session_performance (user_id)
             VALUES ($1)
             ON CONFLICT (user_id) DO NOTHING
             `,
@@ -101,7 +101,7 @@ export class PerformanceModel {
 
         await pgPool.query(
             `
-            UPDATE user_performance
+            UPDATE lp_session_performance
             SET
                 total_lessons_completed = total_lessons_completed + 1,
                 ${incrementColumn} = ${incrementColumn} + 1,
@@ -115,7 +115,7 @@ export class PerformanceModel {
 
     static async getSummary(userId: string) {
         const res = await pgPool.query(
-            `SELECT * FROM user_performance WHERE user_id = $1`,
+            `SELECT * FROM lp_session_performance WHERE user_id = $1`,
             [userId]
         );
 
@@ -125,7 +125,7 @@ export class PerformanceModel {
     static async deletePerformanceByUserId(userId: string) {
         try {
             return await pgPool.query(
-                `DELETE FROM user_performance WHERE user_id = $1`,
+                `DELETE FROM lp_session_performance WHERE user_id = $1`,
                 [userId]
             );
         }

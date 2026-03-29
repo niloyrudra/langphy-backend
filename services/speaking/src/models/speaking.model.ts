@@ -44,7 +44,7 @@ const speakingLessonSchema = new Schema(
         }
     },
     {
-        collection: "speaking",
+        collection: "speakings",
         timestamps: false
     }
 );
@@ -58,7 +58,7 @@ export type SpeakingLessonDoc = InferSchemaType<typeof speakingLessonSchema>;
  * 3️⃣ Typed model
  */
 const Speaking: Model<SpeakingLessonDoc> = mongoose.model<SpeakingLessonDoc>(
-    "Speaking",
+    "Speakings",
     speakingLessonSchema
 );
 

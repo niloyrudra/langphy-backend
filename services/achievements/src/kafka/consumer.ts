@@ -1,11 +1,12 @@
-import { handleSessionCompleted } from "../services/performance.service.js";
+// import { handleSessionCompleted } from "../services/achievement.service.js";
 import { EventIndexModel } from "../models/eventIndex.model.js";
 import { kafka } from "./kafka.client.js";
-import { SessionCompletedEventSchema, TOPICS, UserDeletedEventSchema } from "@langphy/shared";
+import { AchievementUnlockedEventSchema, TOPICS, UserDeletedEventSchema } from "@langphy/shared";
 import { producer } from "./producer.js";
-import { SessionPerformanceRepo } from "../repos/sessionPerformance.repo.js";
-import { SessionAttemptRepo } from "../repos/attempt.repo.js";
+import { AchievementsRepo } from "../repos/achievement.repo.js";
 import { DeletedUsersRepo } from "../repos/deleted-users.repo.js";
+import { UserAchievementsRepo } from "../repos/user-achievement.repo.js";
+import { handleAchievementsUnlocked } from "../services/achievement.service.js";
 
 const consumer = kafka.consumer({
     groupId: `${process.env.SERVICE_NAME}-group`
@@ -30,32 +31,22 @@ export const initConsumer = async () => {
 
             const rawData = JSON.parse( message.value.toString() );
 
-            if( topic === TOPICS.SESSION_COMPLETED ) {    
-                // const event = PerformanceUpdatedEventSchema.parse(rawData);
-                const event = SessionCompletedEventSchema.parse(rawData);
+            if( topic === TOPICS.ACHIEVEMENTS_UPDATED ) {    
+                const event = AchievementUnlockedEventSchema.parse(rawData);
                 
                 const existing = await EventIndexModel.exists( event.event_id );
                 if(existing) return;
                 if(await DeletedUsersRepo.exists( event.user_id )) return;
 
-                const result = await handleSessionCompleted({
-                    user_id: event.user_id,
-                    unit_id: event.payload.unit_id,
-                    session_type: event.payload.session_type,
-                    session_key: event.payload.session_key,
-                    score: event.payload.score ?? 0,
-                    attempts: event.payload.attempts ?? 0,
-                    total_duration_ms: event.payload.total_duration_ms,
-                    completed_at: event.payload.completed_at,
-                });
+                const result = await handleAchievementsUnlocked( event );
 
                 if(result.updated) {
                     await producer?.send({
-                        topic: TOPICS.PERFORMANCE_UPDATED,
+                        topic: TOPICS.ACHIEVEMENT_UNLOCKED,
                         messages: [{
                             key: event.user_id,
                             value: JSON.stringify({
-                                event_type: "performance.updated",
+                                event_type: "achievement.unlocked",
                                 payload: event.payload
                             }),
                         }],
@@ -72,15 +63,15 @@ export const initConsumer = async () => {
 
                     await DeletedUsersRepo.insert( event.user_id );
 
-                    await SessionPerformanceRepo.deleteSessionPerformanceByUserId( event.user_id );
-                    await SessionAttemptRepo.deleteSessionAttemptsByUserId( event.user_id );
+                    await AchievementsRepo.deleteAchievementsByUserId( event.user_id );
+                    await UserAchievementsRepo.deleteUserAchievementsByUserId( event.user_id );
 
                     await EventIndexModel.markProcessed( event );
 
-                    console.log( "🗑 Session Performance deleted for:", event.user_id );
+                    console.log( "🗑 Achievements or User Achievements are deleted for:", event.user_id );
                 }
                 catch(err) {
-                    console.error( "Session Performance deletion failed:", err );
+                    console.error( "Achievements or User Achievements deletion failed:", err );
                 }
             }
 

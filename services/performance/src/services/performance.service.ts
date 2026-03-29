@@ -7,9 +7,9 @@ interface SessionCompletedEvent {
     session_type: string;
     session_key: string;
     score: number;
-    accuracy: number;
+    attempts: number;
     total_duration_ms: number;
-    occurred_at: number;
+    completed_at: number;
 };
 
 export const handleSessionCompleted = async ( event: SessionCompletedEvent ) => {
@@ -20,9 +20,9 @@ export const handleSessionCompleted = async ( event: SessionCompletedEvent ) => 
             sessionType: event.session_type,
             sessionKey: event.session_key,
             score: event.score,
-            accuracy: event.accuracy,
-            totalDurationMs: event.total_duration_ms,
-            occurredAt: event.occurred_at
+            attempts: event.attempts,
+            total_duration_ms: event.total_duration_ms,
+            completed_at: event.completed_at
         });
 
         // Retry -> do nothing
@@ -35,9 +35,9 @@ export const handleSessionCompleted = async ( event: SessionCompletedEvent ) => 
             sessionType: event.session_type,
             sessionKey: event.session_key,
             score: event.score,
-            accuracy: event.accuracy,
-            totalDurationMs: event.total_duration_ms,
-            completedAt: event.occurred_at
+            attempts: event.attempts,
+            total_duration_ms: event.total_duration_ms,
+            completed_at: event.completed_at
         });
 
         return {
