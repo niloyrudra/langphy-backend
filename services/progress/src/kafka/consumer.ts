@@ -46,7 +46,7 @@ export const initConsumer = async () => {
                     category_id: event.payload.category_id,
                     unit_id: event.payload.unit_id,
                     user_id: event.user_id,
-                    content_type: event.payload.lesson_type,
+                    content_type: event.payload.session_type, // "quiz" | "practice" | "reading" | "writing" | "speaking" | "listening"
                     content_id: event.payload.lesson_id,
                     session_key: event.payload.session_key,
                     lesson_order: event.payload.lesson_order,

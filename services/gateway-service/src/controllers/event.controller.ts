@@ -1,14 +1,26 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { BaseEventSchema } from "@langphy/shared";
 // import { mapEventToTopic } from "../routes/event.route.js";
 import { publishEvent } from "../kafka/producer.js";
 import { EventInboxModel } from "../models/eventIndex.model.js";
+import type { AuthRequest } from "../middlewares/require-auth.js";
+import { RequestValidationError } from "../errors/request-validation-errors.js";
+import { BadRequestError } from "../errors/bad-request-errors.js";
+import { validationResult } from "express-validator";
 
-export const postEvent = async (req: Request, res: Response) => {
+export const postEvent = async (req: AuthRequest, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) throw new RequestValidationError(errors.array());
+
+    const userId = req.user?.id;
+    if (!userId) throw new BadRequestError("User ID is required");
     try {
 
         // 1️⃣ Validate shape
-        const event = BaseEventSchema.parse(req.body);
+        const event = BaseEventSchema.parse({
+            ...req.body,
+            user_id: userId // enforce from auth
+        });
     
         // 2️⃣ Idempotency (HTTP-level)
         const alreadyHandled = await EventInboxModel.hasProcessed(event.event_id);
@@ -32,8 +44,14 @@ export const postEvent = async (req: Request, res: Response) => {
     
         return res.sendStatus(200);
     }
-    catch(error) {
+    catch(error: any) {
         console.error( "POST /api/events failed", error );
-        return res.status(400).json({error: "Invalid event"});
+        // return res.status(400).json({error: "Invalid event"});
+        console.error("❌ Event processing failed:", error);
+
+        return res.status(500).json({
+            error: "Event processing failed",
+            details: error.message,
+        });
     }
 };

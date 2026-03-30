@@ -162,40 +162,46 @@ export class SettingsModel {
 
     // Update settings
     static async updateSettings(userId: string, data: SettingsData): Promise<UserSettings> {
-        const result = await pgPool.query(
-            `UPDATE lp_settings
-             SET theme = COALESCE($1, theme),
-                 speaking_service = COALESCE($2, speaking_service),
-                 reading_service = COALESCE($3, reading_service),
-                 writing_service = COALESCE($4, writing_service),
-                 listening_service = COALESCE($5, listening_service),
-                 practice_service = COALESCE($6, practice_service),
-                 quiz_service = COALESCE($7, quiz_service),
-                 sound_effect = COALESCE($8, sound_effect),
-                 notifications = COALESCE($9, notifications),
-                 language = COALESCE($10, language),
-                 updated_at = now()
-             WHERE user_id = $11
-             RETURNING *`,
-            [
-                data.theme,
-                data.speaking_service,
-                data.reading_service,
-                data.writing_service,
-                data.listening_service,
-                data.practice_service,
-                data.quiz_service,
-                data.sound_effect,
-                data.notifications,
-                data.language,
-                userId
-            ]
-        );
-
-        if (!result.rows[0]) {
-            throw new Error("Settings not found for this user.");
+        try {
+            const result = await pgPool.query(
+                `UPDATE lp_settings
+                 SET theme = COALESCE($1, theme),
+                     speaking_service = COALESCE($2, speaking_service),
+                     reading_service = COALESCE($3, reading_service),
+                     writing_service = COALESCE($4, writing_service),
+                     listening_service = COALESCE($5, listening_service),
+                     practice_service = COALESCE($6, practice_service),
+                     quiz_service = COALESCE($7, quiz_service),
+                     sound_effect = COALESCE($8, sound_effect),
+                     notifications = COALESCE($9, notifications),
+                     language = COALESCE($10, language),
+                     updated_at = now()
+                 WHERE user_id = $11
+                 RETURNING *`,
+                [
+                    data.theme,
+                    data.speaking_service,
+                    data.reading_service,
+                    data.writing_service,
+                    data.listening_service,
+                    data.practice_service,
+                    data.quiz_service,
+                    data.sound_effect,
+                    data.notifications,
+                    data.language,
+                    userId
+                ]
+            );
+    
+            if (!result.rows[0]) {
+                throw new Error("Settings not found for this user.");
+            }
+    
+            return result.rows[0];
         }
-
-        return result.rows[0];
+        catch(error) {
+            console.error("updateSettings error:", error);
+            throw error;
+        }
     }
 }

@@ -4,7 +4,7 @@ import { kafka } from "./kafka.client.js";
 let producer: ReturnType<typeof kafka.producer> | null = null;
 
 export const initProducer = async () => {
-  if( !producer ) return producer;
+  if( producer ) return producer;
 
   producer = kafka.producer({
     allowAutoTopicCreation: false,

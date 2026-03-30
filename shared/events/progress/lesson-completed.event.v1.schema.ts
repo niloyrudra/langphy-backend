@@ -16,7 +16,7 @@ export const LessonCompletedEventSchema = BaseEventSchema.extend({
         session_key: z.string(),
         lesson_id: z.uuid(),
         lesson_order: z.number(),
-        lesson_type: z.enum(["quiz",  "practice", "reading", "writing", "speaking", "listening"]),
+        session_type: z.enum(["quiz",  "practice", "reading", "writing", "speaking", "listening"]),
         completed: z.boolean(),
         duration_ms: z.number(),
         progress_percent: z.number(),

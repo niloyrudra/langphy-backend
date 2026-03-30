@@ -48,6 +48,14 @@ spec:
                 name: progress-srv
                 port:
                   number: 3002
+          
+          - path: /api/vocabulary/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: progress-srv
+                port:
+                  number: 3002
 
           - path: /api/performance/?(.*)
             pathType: ImplementationSpecific
