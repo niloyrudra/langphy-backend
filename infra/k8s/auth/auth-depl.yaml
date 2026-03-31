@@ -34,31 +34,42 @@ spec:
                 secretKeyRef:
                   name: auth-secrets
                   key: PG_HOST
+
             - name: PG_PORT
               valueFrom:
                 secretKeyRef:
                   name: auth-secrets
                   key: PG_PORT
+
             - name: PG_DB
               valueFrom:
                 secretKeyRef:
                   name: auth-secrets
                   key: PG_DB
+
             - name: PG_USER
               valueFrom:
                 secretKeyRef:
                   name: auth-secrets
                   key: PG_USER
+
             - name: PG_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: auth-secrets
                   key: PG_PASSWORD
+                  
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:
                   name: auth-secrets
                   key: JWT_KEY
+
+            - name: RESEND_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: auth-secrets
+                  key: RESEND_API_KEY
           
           resources:
             limits:
